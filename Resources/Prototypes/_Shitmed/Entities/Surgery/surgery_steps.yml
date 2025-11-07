@@ -672,6 +672,25 @@
     painDuration: 60
     sleepModifier: 0.34
 
+# Monolith Port: Cortical Borer
+
+- type: entity
+  parent: SurgeryStepBase
+  id: SurgeryStepRemoveCorticalBorer
+  name: Remove the Cortical Borer
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: SurgeryStep
+    tool:
+    - type: Tweezers
+    duration: 8
+  - type: Sprite
+    sprite: _Shitmed/Objects/Specific/Medical/Surgery/hemostat.rsi
+    state: hemostat
+  - type: SurgeryStepRemoveCorticalBorer
+  - type: SurgeryStepEmoteEffect
+
+# Monlith Port end
 
 
 # The lengths I go to just for a joke... I HATE HARDCODING AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA

@@ -106,6 +106,13 @@
           reagent: Nutriment
           min: 0.1
         factor: 1
+      # Monolith change: Cortical Borers
+      - !type:GenericStatusEffect # Mono change
+        key: CorticalBorerProtection
+        type: Add
+        time: 3 # May be too much, needs testing
+        refresh: false
+      # End of Monolith change
   plantMetabolism:
   - !type:PlantAdjustNutrition
     amount: 0.1

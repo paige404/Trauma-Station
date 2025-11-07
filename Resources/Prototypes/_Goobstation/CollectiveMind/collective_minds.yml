@@ -87,3 +87,11 @@
   name: collective-mind-xeno
   keycode: 'z'
   color: "#8c3986"
+
+# Trauma: Monolith Cortical Borer Port
+- type: collectiveMind
+  id: CorticalBorerMind
+  name: collective-mind-borer
+  keycode: 'o'
+  color: "#8c3986"
+# Trauma: Monolith Cortical Borer Port end

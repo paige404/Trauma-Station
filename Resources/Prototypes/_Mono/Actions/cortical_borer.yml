@@ -1,0 +1,91 @@
+# SPDX-FileCopyrightText: 2025 Coenx-flex
+# SPDX-FileCopyrightText: 2025 Cojoke
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Trauma changes:
+# - Split out fields into Action and TargetAction components in each of these
+#   because of differences in Mono codebase re: InstantAction and EntityTargetAction components
+- type: entity
+  id: ActionCorticalBorerChemMenu
+  name: Chemicals
+  description: Open the chemicals menu.
+  components:
+  - type: Action
+    icon: _Mono/Interface/Action/borer_chem.png
+  - type: InstantAction
+    event: !type:CorticalChemMenuActionEvent
+
+- type: entity
+  id: ActionCorticalBorerInfest
+  name: Infest
+  description: Infest target Humanoid. Target host must have a bloodstream.
+  components:
+  - type: Action
+    useDelay: 5
+    itemIconStyle: NoItem
+    icon: _Mono/Interface/Action/borer_infest.png
+  - type: TargetAction
+    interactOnMiss: false
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - Body
+    canTargetSelf: false
+    event: !type:CorticalInfestEvent {}
+
+- type: entity
+  id: ActionCorticalBorerEject
+  name: Eject Host
+  description: Eject yourself from your host.
+  components:
+  - type: Action
+    icon: _Mono/Interface/Action/borer_eject.png
+    useDelay: 5
+  - type: InstantAction
+    event: !type:CorticalEjectEvent
+
+- type: entity
+  id: ActionCheckBlood
+  name: Check Blood
+  description: Inspect the blood of your host to see how they are doing.
+  components:
+  - type: Action
+    icon: _Mono/Interface/Action/borer_bloodcheck.png
+    useDelay: 5
+  - type: InstantAction
+    event: !type:CorticalCheckBloodEvent
+
+
+- type: entity
+  id: ActionControlHost
+  name: Take Control
+  description: Take full control of your host, lasts for 40 seconds on awake hosts.
+  components:
+  - type: Action
+    icon: _Mono/Interface/Action/borer_control.png
+    useDelay: 120 # Trauma - 2 minutes, down from 5m 40s cause we don't have 8 hour rounds
+  - type: InstantAction
+    event: !type:CorticalTakeControlEvent
+
+- type: entity
+  id: ActionEndControlHost
+  name: Relinquish Control
+  description: Give up hold of the host's body early.
+  components:
+  - type: Action
+    icon: _Mono/Interface/Action/borer_eject.png
+    useDelay: 5
+  - type: InstantAction
+    event: !type:CorticalEndControlEvent
+
+- type: entity
+  id: ActionLayEggHost
+  name: Lay Egg
+  description: Force your host to vomit an egg. Costs 200 chemicals. # needs to be changed if the base chem cost is changed
+  components:
+  - type: Action
+    icon: _Mono/Interface/Action/borer_egg.png
+    useDelay: 5
+  - type: InstantAction
+    event: !type:CorticalLayEggEvent

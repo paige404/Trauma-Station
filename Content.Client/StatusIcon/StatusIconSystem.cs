@@ -10,6 +10,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Shared._Mono.CorticalBorer;
 using Content.Shared.CCVar;
 using Content.Shared.Ghost;
 using Content.Shared.StatusIcon;
@@ -103,6 +104,11 @@ public sealed class StatusIconSystem : SharedStatusIconSystem
 
         if (data.ShowTo != null && !_entityWhitelist.IsValid(data.ShowTo, viewer))
             return false;
+
+        // Monolith Port: Cortical Borer
+        if (HasComp<CorticalBorerComponent>(ent))
+            return false;
+        // Monolith Port end
 
         return true;
     }

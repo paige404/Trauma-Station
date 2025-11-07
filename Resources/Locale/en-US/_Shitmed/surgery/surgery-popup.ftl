@@ -95,3 +95,7 @@ surgery-popup-step-SurgeryStepInsertPlasmaVessel = {$user} is inserting a plasma
 surgery-popup-step-SurgeryStepInsertEggSack = {$user} is inserting an egg sack into {$target}'s {$part}!
 surgery-popup-step-SurgeryStepXenoTakeSample = {$user} is carefully removing a piece of {$target}'s {$part}.
 surgery-popup-step-SurgeryStepGraftXenoSample = {$user} is grafting xeno tissue onto {$target}'s {$part}!
+
+# Monolith Port: Cortical Borer
+surgery-popup-step-SurgeryStepRemoveCorticalBorer = {$user} is removing the Cortical Borer from {$target}'s {$part}!
+# Monolith Port end

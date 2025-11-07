@@ -57,6 +57,12 @@ public sealed partial class GenericStatusEffect : EntityEffect
         {
             statusSys.TryAddStatusEffect(args.TargetEntity, Key, TimeSpan.FromSeconds(time), Refresh, Component);
         }
+        // Monlith Cortical Borer Port start. TODO: this smells like shitcode
+        else if (Type == StatusEffectMetabolismType.Add) //just add status without component
+        {
+            statusSys.TryAddStatusEffect(args.TargetEntity, Key, TimeSpan.FromSeconds(time), Refresh);
+        }
+        // Monolith Cortical Borer Port end
         else if (Type == StatusEffectMetabolismType.Remove)
         {
             statusSys.TryRemoveTime(args.TargetEntity, Key, TimeSpan.FromSeconds(time));
