@@ -18,6 +18,12 @@ cortical-borer-sugar-block = You taste something sweet.
 cortical-borer-already-control = You are already controlling your host.
 cortical-borer-vomit = {$name} vomits out a {$egg}!
 
+## Trauma: Invade Thoughts messages
+cortical-borer-whisper-title = Invade Thoughts
+cortical-borer-whisper-popup = Your inner monologue contorts and speaks against your will:
+cortical-borer-whisper-whisper = You plant a thought in your host's mind: {$message}
+cortical-borer-whisper-mindless = This host has no thoughts to shape!
+
 ## UI
 cortical-borer-dispenser-window-cost = {$cost} chemicals
 cortical-borer-ghostrole-name = Cortical Borer

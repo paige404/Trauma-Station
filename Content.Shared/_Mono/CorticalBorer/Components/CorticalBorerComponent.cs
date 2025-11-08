@@ -107,6 +107,7 @@ public sealed partial class CorticalBorerComponent : Component
         "ActionCorticalBorerEject",
         "ActionCorticalBorerChemMenu",
         "ActionCheckBlood",
+        "ActionInvadeThoughts",
         "ActionControlHost",
     };
 }

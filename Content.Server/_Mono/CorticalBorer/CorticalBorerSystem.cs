@@ -7,6 +7,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Server.Administration;
 using Content.Server.Body.Components;
 using Content.Server.Body.Systems;
 using Content.Server.Chat.Managers;
@@ -17,6 +18,7 @@ using Content.Server.Ghost.Roles.Components;
 using Content.Server.Medical;
 using Content.Server.Medical.Components;
 using Content.Server.Nutrition.Components;
+using Content.Server.Prayer;
 using Content.Shared._Mono.CorticalBorer;
 using Content.Shared._Starlight.CollectiveMind;
 using Content.Shared.Administration.Logs;
@@ -37,6 +39,7 @@ using Content.Shared.Popups;
 using Content.Shared.Species.Components;
 using Robust.Server.GameObjects;
 using Robust.Shared.Map;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
@@ -58,7 +61,12 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
     [Dependency] private readonly GhostRoleSystem _ghost  = default!;
     [Dependency] private readonly MetaDataSystem _metaData = default!;
     [Dependency] private readonly CollectiveMindUpdateSystem _collective = default!;
+    // Trauma start
+    [Dependency] private readonly QuickDialogSystem _quickDialog = default!;
+    [Dependency] private readonly PrayerSystem _prayer = default!;
 
+    private EntityQuery<ActorComponent> _actorQuery;
+    // Trauma end
     public override void Initialize()
     {
         SubscribeAbilities();
@@ -69,9 +77,12 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerDispenserSetInjectAmountMessage>(OnSetInjectAmountMessage);
 
         SubscribeLocalEvent<InventoryComponent, InfestHostAttempt>(OnInfestHostAttempt);
-        SubscribeLocalEvent<CorticalBorerComponent, CheckTargetedSpeechEvent>(OnSpeakEvent);
+        // Trauma: worms can't talk
+        // SubscribeLocalEvent<CorticalBorerComponent, CheckTargetedSpeechEvent>(OnSpeakEvent);
 
         SubscribeLocalEvent<CorticalBorerComponent, MindRemovedMessage>(OnMindRemoved);
+
+        _actorQuery = GetEntityQuery<ActorComponent>();
     }
 
     private void OnStartup(Entity<CorticalBorerComponent> ent, ref ComponentStartup args)
@@ -106,16 +117,17 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         }
     }
 
-    private void OnSpeakEvent(Entity<CorticalBorerComponent> ent, ref CheckTargetedSpeechEvent args)
-    {
-        args.ChatTypeIgnore.Add(InGameICChatType.CollectiveMind);
-
-        if (ent.Comp.Host.HasValue)
-        {
-            args.Targets.Add(ent);
-            args.Targets.Add(ent.Comp.Host.Value);
-        }
-    }
+    // Trauma: Worms can't talk anymore
+    // private void OnSpeakEvent(Entity<CorticalBorerComponent> ent, ref CheckTargetedSpeechEvent args)
+    // {
+    //     args.ChatTypeIgnore.Add(InGameICChatType.CollectiveMind);
+    //
+    //     if (ent.Comp.Host.HasValue)
+    //     {
+    //         args.Targets.Add(ent);
+    //         args.Targets.Add(ent.Comp.Host.Value);
+    //     }
+    // }
 
     public void UpdateChems(Entity<CorticalBorerComponent> ent, int change)
     {
@@ -420,6 +432,32 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         infestedComp.ControlTimeEnd = null;
         _container.CleanContainer(infestedComp.ControlContainer);
     }
+
+    // Trauma start
+    /// <summary>
+    /// Opens a prompt to send a message directly to the host.
+    /// </summary>
+    /// <param name="ent">the borer entity</param>
+    /// <param name="infestedComp"></param>
+    public void InvadeThoughts(Entity<CorticalBorerComponent> ent, CorticalBorerInfestedComponent infestedComp)
+    {
+        var target = ent.Comp.Host;
+        if (!_actorQuery.TryComp(ent.Owner, out var actor)
+            || !_actorQuery.TryComp(target, out var actorTarget))
+        {
+            _popup.PopupEntity(Loc.GetString("cortical-borer-whisper-mindless"), ent, ent, PopupType.Medium);
+            return;
+        }
+
+        _quickDialog.OpenDialog(actor.PlayerSession, Loc.GetString("cortical-borer-whisper-title"), "Message", (string message) =>
+        {
+            _prayer.SendSubtleMessage(actorTarget.PlayerSession, actor.PlayerSession, message, Loc.GetString("cortical-borer-whisper-popup"));
+            _popup.PopupEntity(Loc.GetString("cortical-borer-whisper-whisper",
+                    ("message", message)),
+                ent.Owner, ent.Owner);
+        });
+    }
+    // Trauma end
 
     private void OnMindRemoved(Entity<CorticalBorerComponent> ent, ref MindRemovedMessage args)
     {

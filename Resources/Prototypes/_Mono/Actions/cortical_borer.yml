@@ -89,3 +89,17 @@
     useDelay: 5
   - type: InstantAction
     event: !type:CorticalLayEggEvent
+
+- type: entity
+  id: ActionInvadeThoughts
+  name: Invade Thoughts
+  description: Shape your host's thoughts to transmit a message.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    icon:
+      sprite: _Goobstation/SlaughterDemon/abilities.rsi # TODO
+      state: whisper
+    itemIconStyle: NoItem
+  - type: InstantAction
+    event: !type:CorticalInvadeThoughtsEvent

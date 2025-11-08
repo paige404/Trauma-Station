@@ -32,9 +32,10 @@ public sealed partial class CorticalBorerSystem
         SubscribeLocalEvent<CorticalBorerComponent, CorticalChemMenuActionEvent>(OnChemcialMenu);
         SubscribeLocalEvent<CorticalBorerComponent, CorticalCheckBloodEvent>(OnCheckBlood);
 
-
         SubscribeLocalEvent<CorticalBorerInfestedComponent, CorticalEndControlEvent>(OnEndControl);
         SubscribeLocalEvent<CorticalBorerInfestedComponent, CorticalLayEggEvent>(OnLayEgg);
+
+        SubscribeLocalEvent<CorticalBorerComponent, CorticalInvadeThoughtsEvent>(OnInvadeThoughts); // Trauma
     }
 
     private void OnChemcialMenu(Entity<CorticalBorerComponent> ent, ref CorticalChemMenuActionEvent args)
@@ -239,5 +240,33 @@ public sealed partial class CorticalBorerSystem
         UpdateChems(borer, -borer.Comp.EggCost);
 
         args.Handled = true;
+    }
+
+    private void OnInvadeThoughts(Entity<CorticalBorerComponent> ent, ref CorticalInvadeThoughtsEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        if (ent.Comp.Host is null)
+        {
+            _popup.PopupEntity(Loc.GetString("cortical-borer-no-host"), ent, ent, PopupType.Medium);
+            return;
+        }
+
+        // Host is dead, you can't take control
+        if (TryComp<MobStateComponent>(ent.Comp.Host, out var mobState) &&
+            mobState.CurrentState == MobState.Dead)
+        {
+            _popup.PopupEntity(Loc.GetString("cortical-borer-dead-host"), ent, ent, PopupType.Medium);
+            return;
+        }
+
+        if (!TryComp<CorticalBorerInfestedComponent>(ent.Comp.Host, out var infestedComp))
+            return;
+
+        if (!CanUseAbility(ent, ent.Comp.Host.Value))
+            return;
+
+        InvadeThoughts(ent, infestedComp);
     }
 }
