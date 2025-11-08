@@ -24,6 +24,7 @@ using Content.Shared._Shitmed.Medical.Surgery.Steps.Parts;
 using Content.Shared._Shitmed.Medical.Surgery.Wounds.Systems;
 using Content.Shared._Shitmed.Medical.Surgery.Wounds.Components;
 using Content.Shared._Shitmed.Medical.Surgery.Traumas.Systems;
+using Content.Shared._Mono.CorticalBorer;
 using Content.Shared.Buckle.Components;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Part;
@@ -74,6 +75,7 @@ public abstract partial class SharedSurgerySystem : EntitySystem
     [Dependency] private readonly PainSystem _pain = default!;
     [Dependency] private readonly SharedUserInterfaceSystem _ui = default!;
     [Dependency] protected readonly StatusEffectsSystem Status = default!;
+    [Dependency] private readonly SharedCorticalBorerSystem _corticalBorer = default!; // Monolith Port
 
     private EntityQuery<BodyComponent> _bodyQuery;
     private EntityQuery<StackComponent> _stackQuery;
@@ -106,6 +108,9 @@ public abstract partial class SharedSurgerySystem : EntitySystem
         SubscribeLocalEvent<SurgeryTargetComponent, SurgeryDoAfterEvent>(OnTargetDoAfter);
         SubscribeLocalEvent<SurgeryCloseIncisionConditionComponent, SurgeryValidEvent>(OnCloseIncisionValid);
         SubscribeLocalEvent<SurgeryHasBodyConditionComponent, SurgeryValidEvent>(OnHasBodyConditionValid);
+        // Monolith Cortical Borer Port
+        SubscribeLocalEvent<SurgeryCorticalBorerConditionComponent, SurgeryValidEvent>(OnCorticalBorerValid);
+        // Monolith Port end
         SubscribeLocalEvent<SurgeryPartConditionComponent, SurgeryValidEvent>(OnPartConditionValid);
         SubscribeLocalEvent<SurgeryOrganConditionComponent, SurgeryValidEvent>(OnOrganConditionValid);
         SubscribeLocalEvent<SurgeryWoundedConditionComponent, SurgeryValidEvent>(OnWoundedValid);
@@ -214,6 +219,15 @@ public abstract partial class SharedSurgerySystem : EntitySystem
                 healable: true) <= 0)
             args.Cancelled = true;
     }
+
+    // Monolith Cortical Borer Port
+    private void OnCorticalBorerValid(Entity<SurgeryCorticalBorerConditionComponent> ent, ref SurgeryValidEvent args)
+    {
+        if (!HasComp<CorticalBorerInfestedComponent>(args.Body) ||
+            !HasComp<IncisionOpenComponent>(args.Part))
+            args.Cancelled = true;
+    }
+    // Monolith Cortical Borer Port end
 
     private void OnBodyComponentConditionValid(Entity<SurgeryBodyComponentConditionComponent> ent, ref SurgeryValidEvent args)
     {
