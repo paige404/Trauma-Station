@@ -90,7 +90,7 @@
 
 # Trauma: Monolith Cortical Borer Port
 - type: collectiveMind
-  id: CorticalBorerMind
+  id: WormMind
   name: collective-mind-borer
   keycode: 'o'
   color: "#8c3986"

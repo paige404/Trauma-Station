@@ -8,16 +8,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Server.Administration;
-using Content.Server.Body.Components;
 using Content.Server.Body.Systems;
 using Content.Server.Chat.Managers;
-using Content.Server.Chat.Systems;
 using Content.Server.DoAfter;
 using Content.Server.Ghost.Roles;
 using Content.Server.Ghost.Roles.Components;
 using Content.Server.Medical;
 using Content.Server.Medical.Components;
-using Content.Server.Nutrition.Components;
 using Content.Server.Prayer;
 using Content.Shared._Mono.CorticalBorer;
 using Content.Shared._Starlight.CollectiveMind;
@@ -26,7 +23,7 @@ using Content.Shared.Alert;
 using Content.Shared.Body.Components;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.Reagent;
-using Content.Shared.Chat; // Einstein Engines - Languages
+// Einstein Engines - Languages
 using Content.Shared.Database;
 using Content.Shared.Inventory;
 using Content.Shared.MedicalScanner;
@@ -77,6 +74,7 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerDispenserSetInjectAmountMessage>(OnSetInjectAmountMessage);
 
         SubscribeLocalEvent<InventoryComponent, InfestHostAttempt>(OnInfestHostAttempt);
+
         // Trauma: worms can't talk
         // SubscribeLocalEvent<CorticalBorerComponent, CheckTargetedSpeechEvent>(OnSpeakEvent);
 
@@ -89,7 +87,9 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
     {
         //add actions
         foreach (var actionId in ent.Comp.InitialCorticalBorerActions)
+        {
             _actions.AddAction(ent, actionId);
+        }
 
         _alerts.ShowAlert(ent, ent.Comp.ChemicalAlert);
         UpdateUiState(ent);
@@ -319,30 +319,33 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
             mobState.CurrentState == MobState.Dead)
             return;
 
-        if (TryComp<MindContainerComponent>(host, out var mindContainer) &&
-            mindContainer.HasMind ||
-            HasComp<GhostRoleComponent>(host))
-            infestedComp.ControlTimeEnd = _timing.CurTime + comp.ControlDuration;
+        // Trauma: no clonespam bullshit, no infinite puppeting
+        // if (TryComp<MindContainerComponent>(host, out var mindContainer) &&
+        //     mindContainer.HasMind ||
+        //     HasComp<GhostRoleComponent>(host))
+        //     infestedComp.ControlTimeEnd = _timing.CurTime + comp.ControlDuration;
+        infestedComp.ControlTimeEnd = _timing.CurTime + comp.ControlDuration;
 
         if (_mind.TryGetMind(worm, out var wormMind, out _))
             infestedComp.BorerMindId = wormMind;
 
-        if (_mind.TryGetMind(host, out var controledMind, out _))
+        if (_mind.TryGetMind(host, out var controlledMind, out _))
         {
-            infestedComp.OrigininalMindId = controledMind; // set this var here just in case somehow the mind changes from when the infestation started
+            infestedComp.OrigininalMindId = controlledMind; // set this var here just in case somehow the mind changes from when the infestation started
 
+            // Trauma: TODO this reeks of shitcode
             // fish head...
             var dummy = Spawn("FoodMeatFish", MapCoordinates.Nullspace);
             _container.Insert(dummy, infestedComp.ControlContainer);
 
-            _mind.TransferTo(controledMind, dummy);
+            _mind.TransferTo(controlledMind, dummy);
         }
         else
         {
             infestedComp.OrigininalMindId = null;
         }
 
-        comp.ControlingHost = true;
+        comp.ControllingHost = true;
         _mind.TransferTo(wormMind, host);
 
         if (TryComp<GhostRoleComponent>(worm, out var ghostRole))
@@ -351,8 +354,7 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         // add the end control and vomit egg action
         if (_actions.AddAction(host, "ActionEndControlHost") is {} actionEnd)
             infestedComp.RemoveAbilities.Add(actionEnd);
-        if (comp.CanReproduce &&
-            infestedComp.ControlTimeEnd != null) // you can't lay eggs with something you can control forever
+        if (comp.CanReproduce) // Trauma: there are no more forever-puppets, so eggs are always okay
         {
             if (_actions.AddAction(host, "ActionLayEggHost") is {} actionLay)
                 infestedComp.RemoveAbilities.Add(actionLay);
@@ -391,10 +393,10 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
             return;
 
         // not controlling anyone
-        if (!comp.ControlingHost)
+        if (!comp.ControllingHost)
             return;
 
-        comp.ControlingHost = false;
+        comp.ControllingHost = false;
 
         // remove all the actions set to remove
         foreach (var ability in infestedComp.RemoveAbilities)
@@ -438,7 +440,7 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
     /// Opens a prompt to send a message directly to the host.
     /// </summary>
     /// <param name="ent">the borer entity</param>
-    /// <param name="infestedComp"></param>
+    /// <param name="infestedComp">the CorticalBorerInfestedComponent of the host</param>
     public void InvadeThoughts(Entity<CorticalBorerComponent> ent, CorticalBorerInfestedComponent infestedComp)
     {
         var target = ent.Comp.Host;
@@ -461,7 +463,7 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
 
     private void OnMindRemoved(Entity<CorticalBorerComponent> ent, ref MindRemovedMessage args)
     {
-        if (!ent.Comp.ControlingHost)
+        if (!ent.Comp.ControllingHost)
             TryEjectBorer(ent); // No storing them in hosts if you don't have a soul
     }
 }

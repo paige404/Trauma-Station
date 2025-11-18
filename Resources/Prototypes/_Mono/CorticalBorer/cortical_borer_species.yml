@@ -98,8 +98,8 @@
         type: HealthAnalyzerBoundUserInterface
   - type: CollectiveMind # Trauma: changed hivemind id for specificity and consistency
     channels:
-    - CorticalBorerMind
-    defaultChannel: CorticalBorerMind
+    - WormMind
+    defaultChannel: WormMind
   - type: Speech
     enabled: false
   - type: HealthAnalyzer
@@ -112,7 +112,18 @@
 #    - CorticalBorerGuide
   - type: Body
     thermalVisibility: false
-  - type: UniversalLanguageSpeaker
+#  - type: UniversalLanguageSpeaker # Trauma: worms only speak the languages of their hosts
+  - type: LanguageKnowledge # Trauma: No languages for worms
+    speaks: [None]
+    understands: [None]
+  - type: VentCrawler # Trauma
+  - type: StatusEffects
+    allowed:
+    - Stun
+    - SlowedDown
+    - Electrocution
+    - Pacified
+    - RadiationProtection
 
 - type: entity
   parent: BaseItem

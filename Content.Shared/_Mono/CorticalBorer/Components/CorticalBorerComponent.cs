@@ -59,6 +59,14 @@ public sealed partial class CorticalBorerComponent : Component
     [DataField]
     public TimeSpan ControlDuration = TimeSpan.FromSeconds(40);
 
+    // Trauma: borers are stunned and vulnerable when surgically removed
+    /// <summary>
+    /// The stun duration you suffer when forcibly removed from your host
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite)]
+    [DataField]
+    public TimeSpan RemovalStunDuration = TimeSpan.FromSeconds(10);
+
     /// <summary>
     ///     Cooldown between chem regen events.
     /// </summary>
@@ -87,7 +95,7 @@ public sealed partial class CorticalBorerComponent : Component
     public int EggCost = 200;
 
     [DataField]
-    public bool ControlingHost;
+    public bool ControllingHost;
 
     [DataField]
     public ComponentRegistry? AddOnInfest;
@@ -99,7 +107,7 @@ public sealed partial class CorticalBorerComponent : Component
     public ProtoId<AlertPrototype> ChemicalAlert = "Chemicals";
 
     [DataField]
-    public ProtoId<CollectiveMindPrototype> HivemindChannel = "CorticalBorerMind"; // Trauma: channel rename
+    public ProtoId<CollectiveMindPrototype> HivemindChannel = "WormMind"; // Trauma: channel rename
 
     public readonly List<EntProtoId> InitialCorticalBorerActions = new()
     {

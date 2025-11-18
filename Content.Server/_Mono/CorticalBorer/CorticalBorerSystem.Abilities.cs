@@ -5,12 +5,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Content.Server.Body.Components;
 using Content.Server.Medical;
 using Content.Shared._Mono.CorticalBorer;
 using Content.Shared.Body.Components;
 using Content.Shared.DoAfter;
 using Content.Shared.IdentityManagement;
+using Content.Shared.Item;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
@@ -29,7 +29,7 @@ public sealed partial class CorticalBorerSystem
         SubscribeLocalEvent<CorticalBorerComponent, CorticalEjectEvent>(OnEjectHost);
         SubscribeLocalEvent<CorticalBorerComponent, CorticalTakeControlEvent>(OnTakeControl);
 
-        SubscribeLocalEvent<CorticalBorerComponent, CorticalChemMenuActionEvent>(OnChemcialMenu);
+        SubscribeLocalEvent<CorticalBorerComponent, CorticalChemMenuActionEvent>(OnChemicalMenu);
         SubscribeLocalEvent<CorticalBorerComponent, CorticalCheckBloodEvent>(OnCheckBlood);
 
         SubscribeLocalEvent<CorticalBorerInfestedComponent, CorticalEndControlEvent>(OnEndControl);
@@ -38,7 +38,7 @@ public sealed partial class CorticalBorerSystem
         SubscribeLocalEvent<CorticalBorerComponent, CorticalInvadeThoughtsEvent>(OnInvadeThoughts); // Trauma
     }
 
-    private void OnChemcialMenu(Entity<CorticalBorerComponent> ent, ref CorticalChemMenuActionEvent args)
+    private void OnChemicalMenu(Entity<CorticalBorerComponent> ent, ref CorticalChemMenuActionEvent args)
     {
         if(!TryComp<UserInterfaceComponent>(ent, out var uic))
             return;
@@ -78,6 +78,7 @@ public sealed partial class CorticalBorerSystem
             return;
         }
 
+        // Trauma: this isn't really the problem that it would be on Mono
         // // Prevent borers from infesting salvage/exped mobs. :o(
         // if (HasComp<NFSalvageMobRestrictionsComponent>(target))
         // {
@@ -85,6 +86,14 @@ public sealed partial class CorticalBorerSystem
         //
         //     return;
         // }
+
+        // Trauma: prevent borers from infesting mice, mothroaches, and similar little guys
+        if (HasComp<ItemComponent>(target))
+        {
+            _popup.PopupEntity(Loc.GetString("cortical-borer-invalid-host", ("target", targetIdentity)), uid, uid, PopupType.Medium);
+
+            return;
+        }
 
         // anything with bloodstream
         if (!HasComp<BloodstreamComponent>(target))
@@ -201,7 +210,7 @@ public sealed partial class CorticalBorerSystem
             return;
 
         // idk how you would cause this...
-        if (ent.Comp.ControlingHost)
+        if (ent.Comp.ControllingHost)
         {
             _popup.PopupEntity(Loc.GetString("cortical-borer-already-control"), ent, ent, PopupType.Medium);
             return;

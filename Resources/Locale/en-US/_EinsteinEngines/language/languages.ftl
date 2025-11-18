@@ -4,6 +4,9 @@ language-Universal-description = What are you?
 language-Psychomantic-name = Psychomantic
 language-Psychomantic-description = Pure meaning, free from the tyranny of primative words and gestures.
 
+language-None-name = None
+language-None-description = You neither speak nor understand languages.
+
 language-Bubblish-name = Bubblish
 language-Bubblish-description = The language of Slimes. Being a mixture of bubbling noises and pops it's very difficult to speak for humans without the use of mechanical aids.
 

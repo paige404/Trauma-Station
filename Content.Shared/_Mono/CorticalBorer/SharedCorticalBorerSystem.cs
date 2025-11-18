@@ -4,19 +4,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using System.Linq;
+using Content.Shared._EinsteinEngines.Language.Components;
 using Content.Shared.Actions;
-using Content.Shared.Body.Components;
-using Content.Shared.Body.Part;
 using Content.Shared.Body.Systems;
-using Content.Shared.Containers.ItemSlots;
-using Content.Shared.Examine;
 using Content.Shared.MedicalScanner;
 using Content.Shared.Popups;
 using Content.Shared.StatusEffect;
 using Content.Shared.Coordinates;
 using Content.Shared.Damage;
-using Content.Shared.IdentityManagement;
+using Content.Shared.Stunnable;
 using Robust.Shared.Containers;
 using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.Manager;
@@ -34,6 +30,7 @@ public partial class SharedCorticalBorerSystem : EntitySystem
     [Dependency] protected readonly SharedUserInterfaceSystem _ui = default!;
     [Dependency] protected readonly SharedActionsSystem _actions = default!;
     [Dependency] protected readonly SharedContainerSystem _container = default!;
+    [Dependency] protected readonly SharedStunSystem _stun = default!; // Trauma
 
     public bool CanUseAbility(Entity<CorticalBorerComponent> ent, EntityUid target)
     {
@@ -86,9 +83,28 @@ public partial class SharedCorticalBorerSystem : EntitySystem
 
         if (TryComp<DamageableComponent>(ent, out var damComp))
             _damage.SetAllDamage(ent, damComp, 0);
+
+        // Trauma: borers can understand only languages their host understands
+        if (TryComp<LanguageSpeakerComponent>(ent, out var wormLang)
+            && TryComp<LanguageSpeakerComponent>(comp.Host, out var hostLang))
+        {
+            foreach (var lang in hostLang.UnderstoodLanguages)
+            {
+                if (!wormLang.UnderstoodLanguages.Contains(lang))
+                {
+                    wormLang.UnderstoodLanguages.Add(lang);
+                }
+            }
+        }
     }
 
-    public bool TryEjectBorer(Entity<CorticalBorerComponent> ent)
+    /// <summary>
+    /// Attempts to remove the borer from its host.
+    /// </summary>
+    /// <param name="ent">the borer being removed</param>
+    /// <param name="forced">true if the borer is being forcibly removed by surgery or otherwise</param> // Trauma
+    /// <returns>true if the borer was ejected, else false</returns>
+    public bool TryEjectBorer(Entity<CorticalBorerComponent> ent, bool forced = false)
     {
         var (uid, comp) = ent;
 
@@ -107,6 +123,18 @@ public partial class SharedCorticalBorerSystem : EntitySystem
         }
 
         RemCompDeferred<CorticalBorerInfestedComponent>(ent.Comp.Host.Value);
+
+        // Trauma: worm forgets all of the host's languages
+        // TODO: this might break translator implants in the worm?
+        if (TryComp<LanguageSpeakerComponent>(ent, out var wormLang)
+            && TryComp<LanguageSpeakerComponent>(comp.Host, out var hostLang))
+        {
+            foreach (var lang in hostLang.UnderstoodLanguages)
+            {
+                wormLang.UnderstoodLanguages.Remove(lang);
+            }
+        }
+
         ent.Comp.Host = null;
 
         if (comp.RemoveOnInfest is not null)
@@ -126,6 +154,12 @@ public partial class SharedCorticalBorerSystem : EntitySystem
         {
             foreach (var (key, compReg) in comp.AddOnInfest)
                 RemCompDeferred(ent, compReg.Component.GetType());
+        }
+
+        // Trauma: worms are stunned when forcibly ejected
+        if (forced && TryComp<StatusEffectsComponent>(ent, out var status))
+        {
+            _stun.TryStun(ent.Owner, comp.RemovalStunDuration, false, status);
         }
 
         return true;

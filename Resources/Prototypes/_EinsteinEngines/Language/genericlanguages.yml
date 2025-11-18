@@ -337,3 +337,16 @@
     !type:ReplacementObfuscation
     replacement:
     - "*incomprehensible*" # Never actually used
+
+# Trauma: a language for non-speaking creatures that still need to interact with language knowledge systems
+- type: language
+  id: None
+  isVisibleLanguage: false
+  speech:
+    allowRadio: false
+    color: "#C29EFF"
+  obfuscation:
+    !type:ReplacementObfuscation
+    replacement:
+    - "*incomprehensible*" # Never actually used
+
