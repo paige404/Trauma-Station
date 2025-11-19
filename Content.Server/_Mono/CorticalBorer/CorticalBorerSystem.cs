@@ -16,6 +16,7 @@ using Content.Server.Ghost.Roles.Components;
 using Content.Server.Medical;
 using Content.Server.Medical.Components;
 using Content.Server.Prayer;
+using Content.Server.Store.Systems;
 using Content.Shared._Mono.CorticalBorer;
 using Content.Shared._Starlight.CollectiveMind;
 using Content.Shared.Administration.Logs;
@@ -61,6 +62,7 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
     // Trauma start
     [Dependency] private readonly QuickDialogSystem _quickDialog = default!;
     [Dependency] private readonly PrayerSystem _prayer = default!;
+    [Dependency] private readonly StoreSystem _store = default!;
 
     private EntityQuery<ActorComponent> _actorQuery;
     // Trauma end
@@ -260,7 +262,9 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         var chems = GetAllBorerChemicals(ent);
 
         var state = new CorticalBorerDispenserBoundUserInterfaceState(chems, (int)ent.Comp.InjectAmount);
+
         _userInterfaceSystem.SetUiState(ent.Owner, CorticalBorerDispenserUiKey.Key, state);
+
     }
 
     public bool TryToggleCheckBlood(Entity<CorticalBorerComponent> ent)

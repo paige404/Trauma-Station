@@ -124,6 +124,15 @@
     - Electrocution
     - Pacified
     - RadiationProtection
+  - type: Store
+    balance:
+      CorticalBorerEvolutionPoint: 2
+    buySuccessSound:
+      path: "/Audio/Voice/Slime/slime_squish.ogg"
+    categories:
+    - CorticalBorerAbilityCategorySymbiote
+    - CorticalBorerAbilityCategoryBroodmother
+    - CorticalBorerAbilityCategoryDiveworm
 
 - type: entity
   parent: BaseItem

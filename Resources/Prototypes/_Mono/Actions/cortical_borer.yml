@@ -103,3 +103,18 @@
     itemIconStyle: NoItem
   - type: InstantAction
     event: !type:CorticalInvadeThoughtsEvent
+
+- type: entity
+#  parent: BaseAction
+  id: ActionCorticalBorerEvolutionMenu
+  name: Open evolution menu
+  description: Opens the evolution menu.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Goobstation/Changeling/changeling_abilities.rsi
+      state: evolution_menu
+  - type: InstantAction
+    event: !type:CorticalBorerEvolutionMenuEvent {}

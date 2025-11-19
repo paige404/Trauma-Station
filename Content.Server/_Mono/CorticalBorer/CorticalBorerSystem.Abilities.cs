@@ -14,6 +14,8 @@ using Content.Shared.Item;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
+using Content.Shared.Store;
+using Content.Shared.Store.Components;
 
 namespace Content.Server._Mono.CorticalBorer;
 
@@ -36,6 +38,7 @@ public sealed partial class CorticalBorerSystem
         SubscribeLocalEvent<CorticalBorerInfestedComponent, CorticalLayEggEvent>(OnLayEgg);
 
         SubscribeLocalEvent<CorticalBorerComponent, CorticalInvadeThoughtsEvent>(OnInvadeThoughts); // Trauma
+        SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerEvolutionMenuEvent>(OnOpenEvolutionMenu); // Trauma
     }
 
     private void OnChemicalMenu(Entity<CorticalBorerComponent> ent, ref CorticalChemMenuActionEvent args)
@@ -262,7 +265,7 @@ public sealed partial class CorticalBorerSystem
             return;
         }
 
-        // Host is dead, you can't take control
+        // cannot invade the thoughts of a corpse
         if (TryComp<MobStateComponent>(ent.Comp.Host, out var mobState) &&
             mobState.CurrentState == MobState.Dead)
         {
@@ -277,5 +280,13 @@ public sealed partial class CorticalBorerSystem
             return;
 
         InvadeThoughts(ent, infestedComp);
+    }
+
+    private void OnOpenEvolutionMenu(Entity<CorticalBorerComponent> ent, ref CorticalBorerEvolutionMenuEvent args)
+    {
+        if (!TryComp<StoreComponent>(ent.Owner, out var store))
+            return;
+
+        _store.ToggleUi(ent.Owner, ent.Owner, store);
     }
 }

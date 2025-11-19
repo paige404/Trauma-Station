@@ -14,3 +14,4 @@ public sealed partial class CorticalTakeControlEvent : InstantActionEvent {}
 public sealed partial class CorticalEndControlEvent : InstantActionEvent {}
 public sealed partial class CorticalLayEggEvent : InstantActionEvent {}
 public sealed partial class CorticalInvadeThoughtsEvent : InstantActionEvent {} // Trauma
+public sealed partial class CorticalBorerEvolutionMenuEvent : InstantActionEvent { } // Trauma

@@ -117,7 +117,14 @@ public sealed partial class CorticalBorerComponent : Component
         "ActionCheckBlood",
         "ActionInvadeThoughts",
         "ActionControlHost",
+        "ActionCorticalBorerEvolutionMenu",
     };
+
+    /// <summary>
+    ///     Total evolution points gained by the borer.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float TotalEvolutionPoints;
 }
 
 
