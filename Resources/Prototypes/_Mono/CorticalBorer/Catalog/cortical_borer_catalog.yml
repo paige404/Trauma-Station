@@ -9,7 +9,7 @@
   icon: { sprite: _Goobstation/Changeling/changeling_abilities.rsi, state: hivemind_access }
   productAction: ActionHivemindAccess
   cost:
-    EvolutionPoint: 1
+    CorticalBorerEvolutionPoint: 1
   categories:
   - CorticalBorerAbilityCategorySymbiote
   conditions:

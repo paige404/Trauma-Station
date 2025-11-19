@@ -96,6 +96,8 @@
         type: CorticalBorerDispenserBoundUserInterface
       enum.HealthAnalyzerUiKey.Key:
         type: HealthAnalyzerBoundUserInterface
+      enum.StoreUiKey.Key:
+        type: StoreBoundUserInterface
   - type: CollectiveMind # Trauma: changed hivemind id for specificity and consistency
     channels:
     - WormMind
