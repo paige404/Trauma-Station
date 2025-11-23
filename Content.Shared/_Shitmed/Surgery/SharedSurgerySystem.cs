@@ -109,7 +109,7 @@ public abstract partial class SharedSurgerySystem : EntitySystem
         SubscribeLocalEvent<SurgeryCloseIncisionConditionComponent, SurgeryValidEvent>(OnCloseIncisionValid);
         SubscribeLocalEvent<SurgeryHasBodyConditionComponent, SurgeryValidEvent>(OnHasBodyConditionValid);
         // Monolith Cortical Borer Port
-        SubscribeLocalEvent<SurgeryCorticalBorerConditionComponent, SurgeryValidEvent>(OnCorticalBorerValid);
+        SubscribeLocalEvent<_Mono.CorticalBorer.Components.SurgeryCorticalBorerConditionComponent, SurgeryValidEvent>(OnCorticalBorerValid);
         // Monolith Port end
         SubscribeLocalEvent<SurgeryPartConditionComponent, SurgeryValidEvent>(OnPartConditionValid);
         SubscribeLocalEvent<SurgeryOrganConditionComponent, SurgeryValidEvent>(OnOrganConditionValid);
@@ -221,9 +221,9 @@ public abstract partial class SharedSurgerySystem : EntitySystem
     }
 
     // Monolith Cortical Borer Port
-    private void OnCorticalBorerValid(Entity<SurgeryCorticalBorerConditionComponent> ent, ref SurgeryValidEvent args)
+    private void OnCorticalBorerValid(Entity<_Mono.CorticalBorer.Components.SurgeryCorticalBorerConditionComponent> ent, ref SurgeryValidEvent args)
     {
-        if (!HasComp<CorticalBorerInfestedComponent>(args.Body) ||
+        if (!HasComp<_Mono.CorticalBorer.Components.CorticalBorerInfestedComponent>(args.Body) ||
             !HasComp<IncisionOpenComponent>(args.Part))
             args.Cancelled = true;
     }

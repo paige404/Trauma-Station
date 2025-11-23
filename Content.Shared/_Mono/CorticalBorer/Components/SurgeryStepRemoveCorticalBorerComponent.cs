@@ -4,7 +4,7 @@
 
 using Robust.Shared.GameStates;
 
-namespace Content.Shared._Mono.CorticalBorer;
+namespace Content.Shared._Mono.CorticalBorer.Components;
 
 [RegisterComponent, NetworkedComponent]
 public sealed partial class SurgeryStepRemoveCorticalBorerComponent : Component { }

@@ -18,12 +18,14 @@ using Content.Server.Medical.Components;
 using Content.Server.Prayer;
 using Content.Server.Store.Systems;
 using Content.Shared._Mono.CorticalBorer;
+using Content.Shared._Mono.CorticalBorer.Components;
 using Content.Shared._Starlight.CollectiveMind;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Alert;
 using Content.Shared.Body.Components;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.Reagent;
+using Content.Shared.Damage;
 // Einstein Engines - Languages
 using Content.Shared.Database;
 using Content.Shared.Inventory;
@@ -63,6 +65,7 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
     [Dependency] private readonly QuickDialogSystem _quickDialog = default!;
     [Dependency] private readonly PrayerSystem _prayer = default!;
     [Dependency] private readonly StoreSystem _store = default!;
+    [Dependency] private readonly DamageableSystem _damage = default!;
 
     private EntityQuery<ActorComponent> _actorQuery;
     // Trauma end
@@ -81,6 +84,8 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         // SubscribeLocalEvent<CorticalBorerComponent, CheckTargetedSpeechEvent>(OnSpeakEvent);
 
         SubscribeLocalEvent<CorticalBorerComponent, MindRemovedMessage>(OnMindRemoved);
+
+        SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerHostDamageChangeEvent>(OnPurchaseHostDamage);
 
         _actorQuery = GetEntityQuery<ActorComponent>();
     }
@@ -109,13 +114,24 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
             comp.UpdateTimer = _timing.CurTime + TimeSpan.FromSeconds(comp.UpdateCooldown);
 
             if (comp.Host != null)
+            {
                 UpdateChems((comp.Owner, comp), comp.ChemicalGenerationRate);
+                DamageHost(comp.Host, comp.HostDamage);
+            }
         }
 
         foreach (var comp in EntityManager.EntityQuery<CorticalBorerInfestedComponent>())
         {
             if (_timing.CurTime >= comp.ControlTimeEnd)
                 EndControl(comp.Borer);
+        }
+    }
+
+    private void DamageHost(EntityUid? host, DamageSpecifier? damage)
+    {
+        if (damage is not null && TryComp<DamageableComponent>(host, out var damageable))
+        {
+            _damage.TryChangeDamage(host, damage, false, false, damageable);
         }
     }
 
@@ -228,6 +244,12 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
             TryInjectHost(ent, chemProto, ent.Comp.InjectAmount);
 
         UpdateUiState(ent);
+    }
+
+    private void OnPurchaseHostDamage(Entity<CorticalBorerComponent> ent, ref CorticalBorerHostDamageChangeEvent args)
+    {
+        ent.Comp.HostDamage = args.HostDamage;
+        Dirty(ent);
     }
 
     private void OnSetInjectAmountMessage(Entity<CorticalBorerComponent> ent, ref CorticalBorerDispenserSetInjectAmountMessage message)
@@ -356,12 +378,10 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
             _ghost.UnregisterGhostRole((worm, ghostRole)); // prevent players from taking the worm role once mind isn't in the worm
 
         // add the end control and vomit egg action
-        if (_actions.AddAction(host, "ActionEndControlHost") is {} actionEnd)
-            infestedComp.RemoveAbilities.Add(actionEnd);
-        if (comp.CanReproduce) // Trauma: there are no more forever-puppets, so eggs are always okay
+        foreach (var actionId in ent.Comp.ControlCorticalBorerActions)
         {
-            if (_actions.AddAction(host, "ActionLayEggHost") is {} actionLay)
-                infestedComp.RemoveAbilities.Add(actionLay);
+            if (_actions.AddAction(host, actionId) is {} action)
+                infestedComp.RemoveAbilities.Add(action);
         }
 
         if (TryComp<ReformComponent>(host, out var reformComp) && reformComp.ActionEntity.HasValue)

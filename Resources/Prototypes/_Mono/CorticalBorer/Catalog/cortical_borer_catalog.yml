@@ -3,15 +3,55 @@
 
 
 - type: listing
-  id: EvolutionMenuSymbioteTestAction
-  name: evolutionmenu-symbiote-testability-name
-  description: evolutionmenu-symbiote-testability-desc
-  icon: { sprite: _Goobstation/Changeling/changeling_abilities.rsi, state: hivemind_access }
-  productAction: ActionHivemindAccess
+  id: CorticalBorerMenuSymbiosisBenign
+  name: cortical-borer-symbiosis-benign-name
+  description: cortical-borer-symbiosis-benign-desc
+  icon:
+    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+    state: hivemind_access
+  priority: 0
+  productEvent: !CorticalBorerHostDamageChangeEvent
   cost:
     CorticalBorerEvolutionPoint: 1
   categories:
-  - CorticalBorerAbilityCategorySymbiote
+  - CorticalBorerAbilityCategorySymbiosis
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
+
+- type: listing
+  id: CorticalBorerMenuDominationMalignant
+  name: cortical-borer-domination-malignant-name
+  description: cortical-borer-domination-malignant-desc
+  icon:
+    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+    state: bone_shard
+  priority: 0
+  productEvent: !CorticalBorerHostDamageChangeEvent
+    hostDamage:
+      type:
+        Poison: 0.5
+  cost:
+    CorticalBorerEvolutionPoint: 1
+  categories:
+  - CorticalBorerAbilityCategoryDomination
+  conditions:
+  - !type:ListingLimitedStockCondition
+    stock: 1
+
+- type: listing
+  id: CorticalBorerMenuDominationPsychicBlast
+  name: cortical-borer-domination-psychicblast-name
+  description: cortical-borer-domination-psychicblast-desc
+  icon:
+    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+    state: shriek_dissonant
+  priority: 1
+  productAction: ActionCorticalBorerPsychicBlast
+  cost:
+    CorticalBorerEvolutionPoint: 2
+  categories:
+  - CorticalBorerAbilityCategoryDomination
   conditions:
   - !type:ListingLimitedStockCondition
     stock: 1

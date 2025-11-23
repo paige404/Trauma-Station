@@ -5,6 +5,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Shared._EinsteinEngines.Language.Components;
+using Content.Shared._Mono.CorticalBorer.Components;
 using Content.Shared.Actions;
 using Content.Shared.Body.Systems;
 using Content.Shared.MedicalScanner;
@@ -176,6 +177,11 @@ public partial class SharedCorticalBorerSystem : EntitySystem
         var coordinates = _transform.ToMapCoordinates(host.ToCoordinates());
         var spawnedEgg = Spawn(egg, coordinates);
     }
+
+    public void PsychicBlast(Entity<CorticalBorerComponent> ent, EntityUid target)
+    {
+        _stun.TryStun(target, ent.Comp.PsychicBlastDuration, false);
+    }
 }
 
 public sealed class InfestHostAttempt : CancellableEntityEventArgs
@@ -237,4 +243,11 @@ public sealed class CorticalBorerDispenserItem(string reagentName, string reagen
     public int Amount = amount;
     public int Chems = chems;
     public Color ReagentColor = reagentColor;
+}
+
+[DataDefinition]
+public sealed partial class CorticalBorerHostDamageChangeEvent : EntityEventArgs
+{
+    [DataField]
+    public DamageSpecifier? HostDamage;
 }

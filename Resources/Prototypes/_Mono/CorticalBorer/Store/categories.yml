@@ -6,16 +6,16 @@
 # cortical borer
 
 - type: storeCategory
-  id: CorticalBorerAbilityCategorySymbiote
-  name: store-cortical-borer-category-symbiote
+  id: CorticalBorerAbilityCategorySymbiosis
+  name: store-cortical-borer-category-symbiosis
   priority: 0
 
 - type: storeCategory
-  id: CorticalBorerAbilityCategoryBroodmother
-  name: store-cortical-borer-category-broodmother
+  id: CorticalBorerAbilityCategoryTenacity
+  name: store-cortical-borer-category-tenacity
   priority: 1
 
 - type: storeCategory
-  id: CorticalBorerAbilityCategoryDiveworm
-  name: store-cortical-borer-category-diveworm
+  id: CorticalBorerAbilityCategoryDomination
+  name: store-cortical-borer-category-domination
   priority: 2

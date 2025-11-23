@@ -24,21 +24,21 @@ public sealed class CorticalBorerInfestedSystem : EntitySystem
     /// <inheritdoc/>
     public override void Initialize()
     {
-        SubscribeLocalEvent<CorticalBorerInfestedComponent, MapInitEvent>(OnInit);
-        SubscribeLocalEvent<CorticalBorerInfestedComponent, ExaminedEvent>(OnExaminedInfested);
+        SubscribeLocalEvent<Shared._Mono.CorticalBorer.Components.CorticalBorerInfestedComponent, MapInitEvent>(OnInit);
+        SubscribeLocalEvent<Shared._Mono.CorticalBorer.Components.CorticalBorerInfestedComponent, ExaminedEvent>(OnExaminedInfested);
 
-        SubscribeLocalEvent<CorticalBorerInfestedComponent, BodyPartRemovedEvent>(OnBodyPartRemoved);
-        SubscribeLocalEvent<CorticalBorerInfestedComponent, MobStateChangedEvent>(OnStateChange);
-        SubscribeLocalEvent<CorticalBorerInfestedComponent, MindRemovedMessage>(OnMindRemoved);
+        SubscribeLocalEvent<Shared._Mono.CorticalBorer.Components.CorticalBorerInfestedComponent, BodyPartRemovedEvent>(OnBodyPartRemoved);
+        SubscribeLocalEvent<Shared._Mono.CorticalBorer.Components.CorticalBorerInfestedComponent, MobStateChangedEvent>(OnStateChange);
+        SubscribeLocalEvent<Shared._Mono.CorticalBorer.Components.CorticalBorerInfestedComponent, MindRemovedMessage>(OnMindRemoved);
     }
 
-    private void OnInit(Entity<CorticalBorerInfestedComponent> infested, ref MapInitEvent args)
+    private void OnInit(Entity<Shared._Mono.CorticalBorer.Components.CorticalBorerInfestedComponent> infested, ref MapInitEvent args)
     {
         infested.Comp.ControlContainer = _container.EnsureContainer<Container>(infested, "ControlContainer");
         infested.Comp.InfestationContainer = _container.EnsureContainer<Container>(infested, "InfestationContainer");
     }
 
-    private void OnExaminedInfested(Entity<CorticalBorerInfestedComponent> infected, ref ExaminedEvent args)
+    private void OnExaminedInfested(Entity<Shared._Mono.CorticalBorer.Components.CorticalBorerInfestedComponent> infected, ref ExaminedEvent args)
     {
         if (!args.IsInDetailsRange
             || args.Examined != args.Examiner)
@@ -56,7 +56,7 @@ public sealed class CorticalBorerInfestedSystem : EntitySystem
         args.PushMarkup(Loc.GetString("cortical-borer-self-examine", ("chempoints", infected.Comp.Borer.Comp.ChemicalPoints)));
     }
 
-    private void OnStateChange(Entity<CorticalBorerInfestedComponent> infected, ref MobStateChangedEvent args)
+    private void OnStateChange(Entity<Shared._Mono.CorticalBorer.Components.CorticalBorerInfestedComponent> infected, ref MobStateChangedEvent args)
     {
         if (args.NewMobState != MobState.Dead)
             return;
@@ -65,7 +65,7 @@ public sealed class CorticalBorerInfestedSystem : EntitySystem
             _borer.EndControl(infected.Comp.Borer);
     }
 
-    private void OnBodyPartRemoved(Entity<CorticalBorerInfestedComponent> infected, ref BodyPartRemovedEvent args)
+    private void OnBodyPartRemoved(Entity<Shared._Mono.CorticalBorer.Components.CorticalBorerInfestedComponent> infected, ref BodyPartRemovedEvent args)
     {
         if (TryComp<BodyPartComponent>(args.Part, out var part) &&
             part.PartType == BodyPartType.Head)
@@ -75,7 +75,7 @@ public sealed class CorticalBorerInfestedSystem : EntitySystem
         }
     }
 
-    private void OnMindRemoved(Entity<CorticalBorerInfestedComponent> infected, ref MindRemovedMessage args)
+    private void OnMindRemoved(Entity<Shared._Mono.CorticalBorer.Components.CorticalBorerInfestedComponent> infected, ref MindRemovedMessage args)
     {
         if (infected.Comp.Borer.Comp.ControllingHost)
         {

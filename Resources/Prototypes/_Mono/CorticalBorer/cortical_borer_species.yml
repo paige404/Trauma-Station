@@ -90,6 +90,9 @@
     - type: PressureImmunity
     removeOnInfest:
     - type: CanEscapeInventory
+    hostDamage:
+      types:
+        Poison: 0.15
   - type: UserInterface
     interfaces:
       enum.CorticalBorerDispenserUiKey.Key:
@@ -128,13 +131,15 @@
     - RadiationProtection
   - type: Store
     balance:
-      CorticalBorerEvolutionPoint: 2
+      CorticalBorerEvolutionPoint: 200 # TODO 2
     buySuccessSound:
       path: "/Audio/Voice/Slime/slime_squish.ogg"
     categories:
-    - CorticalBorerAbilityCategorySymbiote
-    - CorticalBorerAbilityCategoryBroodmother
-    - CorticalBorerAbilityCategoryDiveworm
+    - CorticalBorerAbilityCategorySymbiosis
+    - CorticalBorerAbilityCategoryTenacity
+    - CorticalBorerAbilityCategoryDomination
+    currencyWhitelist:
+    - CorticalBorerEvolutionPoint
 
 - type: entity
   parent: BaseItem

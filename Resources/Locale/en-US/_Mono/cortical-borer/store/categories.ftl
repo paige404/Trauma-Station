@@ -5,6 +5,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Cortical Borer
-store-cortical-borer-category-symbiote = Symbiote
-store-cortical-borer-category-broodmother = Broodmother
-store-cortical-borer-category-diveworm = Diveworm
+store-cortical-borer-category-symbiosis = Symbiosis
+store-cortical-borer-category-tenacity = Tenacity
+store-cortical-borer-category-domination = Domination

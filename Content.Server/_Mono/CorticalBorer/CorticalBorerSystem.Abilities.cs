@@ -7,6 +7,7 @@
 
 using Content.Server.Medical;
 using Content.Shared._Mono.CorticalBorer;
+using Content.Shared._Mono.CorticalBorer.Components;
 using Content.Shared.Body.Components;
 using Content.Shared.DoAfter;
 using Content.Shared.IdentityManagement;
@@ -14,7 +15,6 @@ using Content.Shared.Item;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
-using Content.Shared.Store;
 using Content.Shared.Store.Components;
 
 namespace Content.Server._Mono.CorticalBorer;
@@ -39,6 +39,8 @@ public sealed partial class CorticalBorerSystem
 
         SubscribeLocalEvent<CorticalBorerComponent, CorticalInvadeThoughtsEvent>(OnInvadeThoughts); // Trauma
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerEvolutionMenuEvent>(OnOpenEvolutionMenu); // Trauma
+
+        SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerPsychicBlastEvent>(OnPsychicBlast); // Trauma
     }
 
     private void OnChemicalMenu(Entity<CorticalBorerComponent> ent, ref CorticalChemMenuActionEvent args)
@@ -288,5 +290,17 @@ public sealed partial class CorticalBorerSystem
             return;
 
         _store.ToggleUi(ent.Owner, ent.Owner, store);
+    }
+
+    private void OnPsychicBlast(Entity<CorticalBorerComponent> ent, ref CorticalBorerPsychicBlastEvent args)
+    {
+        if (args.Handled)
+            return;
+        if (ent.Comp.Host is not null)
+        {
+            _popup.PopupEntity(Loc.GetString("cortical-borer-has-host"), ent, ent, PopupType.Medium);
+            return;
+        }
+        PsychicBlast(ent, args.Target);
     }
 }

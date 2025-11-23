@@ -105,7 +105,6 @@
     event: !type:CorticalInvadeThoughtsEvent
 
 - type: entity
-#  parent: BaseAction
   id: ActionCorticalBorerEvolutionMenu
   name: Open evolution menu
   description: Opens the evolution menu.
@@ -114,7 +113,28 @@
   - type: Action
     itemIconStyle: NoItem
     icon:
-      sprite: _Goobstation/Changeling/changeling_abilities.rsi
+      sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
       state: evolution_menu
   - type: InstantAction
-    event: !type:CorticalBorerEvolutionMenuEvent {}
+    event: !type:CorticalBorerEvolutionMenuEvent
+
+- type: entity
+  id: ActionCorticalBorerPsychicBlast
+  name: Psychic Blast
+  description: Unleash a telepathic onslaught to stun your prey for 6 seconds.
+  components:
+  - type: Action
+    useDelay: 5
+    itemIconStyle: NoItem
+    icon:
+      sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+      state: shriek_dissonant
+  - type: TargetAction
+    interactOnMiss: false
+    range: 4
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - Body
+    canTargetSelf: false
+    event: !type:CorticalBorerPsychicBlastEvent

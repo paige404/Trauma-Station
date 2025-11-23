@@ -6,10 +6,11 @@
 
 using Content.Shared._Starlight.CollectiveMind;
 using Content.Shared.Alert;
+using Content.Shared.Damage;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
-namespace Content.Shared._Mono.CorticalBorer;
+namespace Content.Shared._Mono.CorticalBorer.Components;
 
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CorticalBorerComponent : Component
@@ -94,6 +95,24 @@ public sealed partial class CorticalBorerComponent : Component
     [DataField]
     public int EggCost = 200;
 
+    // Trauma: borer progression mechanics
+    /// <summary>
+    /// Total evolution points gained by the borer.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public float TotalEvolutionPoints;
+
+    // Trauma: Borers can't just afk in a host without any upkeep
+    /// <summary>
+    /// Damage dealt to the host every second while infected
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public DamageSpecifier? HostDamage;
+
+    // Trauma
+    [DataField]
+    public TimeSpan PsychicBlastDuration = TimeSpan.FromSeconds(6);
+
     [DataField]
     public bool ControllingHost;
 
@@ -120,11 +139,21 @@ public sealed partial class CorticalBorerComponent : Component
         "ActionCorticalBorerEvolutionMenu",
     };
 
-    /// <summary>
-    ///     Total evolution points gained by the borer.
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public float TotalEvolutionPoints;
+    public readonly List<EntProtoId> InfestCorticalBorerActions = new()
+    {
+        "ActionCorticalBorerEject",
+        "ActionCorticalBorerChemMenu",
+        "ActionCheckBlood",
+        "ActionInvadeThoughts",
+        "ActionControlHost",
+        "ActionCorticalBorerEvolutionMenu",
+    };
+
+    public readonly List<EntProtoId> ControlCorticalBorerActions = new()
+    {
+        "ActionLayEggHost",
+        "ActionEndControlHost",
+    };
 }
 
 
