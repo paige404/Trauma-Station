@@ -8,11 +8,11 @@
 
 cortical-borer-symbiosis-benign-name = Benign
 cortical-borer-symbiosis-benign-desc =
-    Adapt yourself to mask your presence from the host's immune system. Your presence will no longer poison your host.
+    Adapt yourself to mask your presence from the host's immune system. Your presence will no longer poison your host. Incompatible with Malignant.
 
 cortical-borer-domination-malignant-name = Malignant
 cortical-borer-domination-malignant-desc =
-    Your presence is intolerable to hosts, greatly increasing the poison you inflict in them. (Do not choose this if you wish to keep a host alive.)
+    Your presence is intolerable to hosts, greatly harming them over time. Incompatible with Benign.
 
 cortical-borer-domination-psychicblast-name = Psychic Blast
 cortical-borer-domination-psychicblast-desc =
