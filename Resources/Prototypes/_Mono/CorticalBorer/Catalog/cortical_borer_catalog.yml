@@ -10,7 +10,8 @@
     sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
     state: hivemind_access
   priority: 0
-  productEvent: !CorticalBorerHostDamageChangeEvent
+  productEvent: !type:CorticalBorerHostDamageChangeEvent
+  raiseProductEventOnUser: true
   cost:
     CorticalBorerEvolutionPoint: 1
   categories:
@@ -18,6 +19,9 @@
   conditions:
   - !type:ListingLimitedStockCondition
     stock: 1
+  - !type:BuyBeforeCondition
+    blacklist:
+    - CorticalBorerMenuDominationMalignant
 
 - type: listing
   id: CorticalBorerMenuDominationMalignant
@@ -27,10 +31,11 @@
     sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
     state: bone_shard
   priority: 0
-  productEvent: !CorticalBorerHostDamageChangeEvent
+  productEvent: !type:CorticalBorerHostDamageChangeEvent
     hostDamage:
-      type:
+      types:
         Poison: 0.5
+  raiseProductEventOnUser: true
   cost:
     CorticalBorerEvolutionPoint: 1
   categories:
@@ -38,6 +43,9 @@
   conditions:
   - !type:ListingLimitedStockCondition
     stock: 1
+  - !type:BuyBeforeCondition
+    blacklist:
+    - CorticalBorerMenuSymbiosisBenign
 
 - type: listing
   id: CorticalBorerMenuDominationPsychicBlast
@@ -47,7 +55,7 @@
     sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
     state: shriek_dissonant
   priority: 1
-  productAction: ActionCorticalBorerPsychicBlast
+  productAction: ActionCorticalBorerPsychicBlast # TODO this get added to the MIND, not the borer itself. Little fucky, maybe fix
   cost:
     CorticalBorerEvolutionPoint: 2
   categories:

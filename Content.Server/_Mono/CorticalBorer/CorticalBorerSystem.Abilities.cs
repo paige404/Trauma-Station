@@ -282,6 +282,8 @@ public sealed partial class CorticalBorerSystem
             return;
 
         InvadeThoughts(ent, infestedComp);
+
+        args.Handled = true;
     }
 
     private void OnOpenEvolutionMenu(Entity<CorticalBorerComponent> ent, ref CorticalBorerEvolutionMenuEvent args)
@@ -301,6 +303,10 @@ public sealed partial class CorticalBorerSystem
             _popup.PopupEntity(Loc.GetString("cortical-borer-has-host"), ent, ent, PopupType.Medium);
             return;
         }
+
         PsychicBlast(ent, args.Target);
+        Dirty(args.Action);
+
+        args.Handled = true;
     }
 }

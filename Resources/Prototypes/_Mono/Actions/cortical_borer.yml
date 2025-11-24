@@ -119,22 +119,23 @@
     event: !type:CorticalBorerEvolutionMenuEvent
 
 - type: entity
+  parent: BaseAction
   id: ActionCorticalBorerPsychicBlast
   name: Psychic Blast
   description: Unleash a telepathic onslaught to stun your prey for 6 seconds.
   components:
   - type: Action
-    useDelay: 5
-    itemIconStyle: NoItem
     icon:
       sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
       state: shriek_dissonant
+    itemIconStyle: BigAction
+    useDelay: 30
   - type: TargetAction
     interactOnMiss: false
     range: 4
   - type: EntityTargetAction
+    canTargetSelf: false
+    event: !type:CorticalBorerPsychicBlastEvent
     whitelist:
       components:
       - Body
-    canTargetSelf: false
-    event: !type:CorticalBorerPsychicBlastEvent
