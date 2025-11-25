@@ -22,7 +22,71 @@
     - CorticalBorerMenuDominationMalignant
     - CorticalBorerMenuSymbiosisBenign
 
+- type: listing
+  id: CorticalBorerMenuSymbiosisMedicines
+  name: cortical-borer-symbiosis-medicines-name
+  description: cortical-borer-symbiosis-medicines-desc
+  icon:
+    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+    state: hivemind_access
+  priority: 0
+  productEvent: !type:CorticalBorerChemicalDispenserAdditionEvent
+    chemicals:
+    - borerDermaline
+    - borerEpinephrine
+    - borerOculine
+    - borerSiderlac
+    - borerStellibinin
+    - borerTranexamicAcid
+  raiseProductEventOnUser: true
+  cost:
+    CorticalBorerEvolutionPoint: 1
+  categories:
+  - CorticalBorerAbilityCategorySymbiosis
+  conditions:
+  - !type:BuyBeforeCondition
+    blacklist:
+    - CorticalBorerMenuSymbiosisMedicines
+
 # Tenacity
+- type: listing
+  id: CorticalBorerMenuTenacityLowPressureAdaptation
+  name: cortical-borer-tenacity-lowpressureadaptation-name
+  description: cortical-borer-tenacity-lowpressureadaptation-desc
+  icon:
+    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+    state: space_adaptation
+  priority: 0
+  productEvent: !type:CorticalBorerBarotraumaRemovalEvent
+  raiseProductEventOnUser: true
+  cost:
+    CorticalBorerEvolutionPoint: 2
+  categories:
+  - CorticalBorerAbilityCategoryTenacity
+  conditions:
+  - !type:BuyBeforeCondition
+    blacklist:
+    - CorticalBorerMenuTenacityLowPressureAdaptation
+
+- type: listing
+  id: CorticalBorerMenuTenacityChemicalReserves
+  name: cortical-borer-tenacity-chemicalreserves-name
+  description: cortical-borer-tenacity-chemicalreserves-desc
+  icon:
+    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+    state: anatomic_panacea
+  priority: 1
+  productEvent: !type:CorticalBorerChemicalPointCapChangeEvent
+    delta: 50
+  raiseProductEventOnUser: true
+  cost:
+    CorticalBorerEvolutionPoint: 1
+  categories:
+  - CorticalBorerAbilityCategoryTenacity
+  conditions:
+  - !type:BuyBeforeCondition
+    blacklist:
+    - CorticalBorerMenuTenacityChemicalReserves
 
 # Domination
 - type: listing

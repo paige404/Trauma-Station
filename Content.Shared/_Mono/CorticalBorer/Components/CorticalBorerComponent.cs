@@ -69,7 +69,7 @@ public sealed partial class CorticalBorerComponent : Component
     public TimeSpan RemovalStunDuration = TimeSpan.FromSeconds(10);
 
     /// <summary>
-    ///     Cooldown between chem regen events.
+    /// Cooldown between chem regen events.
     /// </summary>
     public TimeSpan UpdateTimer = TimeSpan.Zero;
     public float UpdateCooldown = 1f;
@@ -89,7 +89,7 @@ public sealed partial class CorticalBorerComponent : Component
     public string EggProto = "CorticalBorerEgg";
 
     /// <summary>
-    /// cost to lay an egg... will not update ability desc if changed
+    /// cost to lay an egg... TODO will not update ability desc if changed
     /// </summary>
     [ViewVariables(VVAccess.ReadWrite)]
     [DataField]
@@ -128,6 +128,27 @@ public sealed partial class CorticalBorerComponent : Component
     [DataField]
     public ProtoId<CollectiveMindPrototype> HivemindChannel = "WormMind"; // Trauma: channel rename
 
+    // Trauma: modifiable chem lists
+    /// <summary>
+    /// The list of <see cref="CorticalBorerChemicalPrototype"/>s that this borer can inject into hosts.
+    /// See cortical_borer_chemicals.yml
+    /// </summary>
+    public List<EntProtoId> ReagentList = new()
+    {
+        "borerBicaridine",
+        "borerKelotane",
+        "borerSaline",
+        "borerEthanol",
+        "borerMuteToxin",
+        "borerCharcoal",
+        "borerHappiness",
+        "borerEphedrine",
+        "borerNorepinephricAcid",
+        "borerDexalinPlus",
+        "borerHeartbreakerToxin",
+        "borerNocturine",
+    };
+
     public readonly List<EntProtoId> InitialCorticalBorerActions = new()
     {
         "ActionCorticalBorerInfest",
@@ -139,6 +160,7 @@ public sealed partial class CorticalBorerComponent : Component
         "ActionCorticalBorerEvolutionMenu",
     };
 
+    // TODO use this or get rid
     public readonly List<EntProtoId> InfestCorticalBorerActions = new()
     {
         "ActionCorticalBorerEject",

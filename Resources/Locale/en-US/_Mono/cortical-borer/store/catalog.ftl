@@ -6,9 +6,27 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+# Symbiosis
+
 cortical-borer-symbiosis-benign-name = Benign
 cortical-borer-symbiosis-benign-desc =
     Adapt yourself to mask your presence from the host's immune system. Your presence will no longer poison your host. Incompatible with Malignant.
+
+cortical-borer-symbiosis-medicines-name = Medicines
+cortical-borer-symbiosis-medicines-desc =
+    You generate some helpful chemicals for your hosts, but with some effort you could produce much more complex medicinal compounds.
+
+# Tenacity
+
+cortical-borer-tenacity-chemicalreserves-name = Chemical Reserves
+cortical-borer-tenacity-chemicalreserves-desc =
+    Expand your chemical reserves' capacity, allowing you to store a greater amount of chemicals at once.
+
+cortical-borer-tenacity-lowpressureadaptation-name = Low Pressure Adaptation
+cortical-borer-tenacity-lowpressureadaptation-desc =
+    Your soft body has left you vulnerable to sudden barometric pressure changes. No longer.
+
+# Domination
 
 cortical-borer-domination-malignant-name = Malignant
 cortical-borer-domination-malignant-desc =

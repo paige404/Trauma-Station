@@ -60,5 +60,55 @@
 
 - type: borerChemical
   id: borerNocturine
-  cost: 5 # needs 18u to start the sleep, so more than blind but still cheaper
+  cost: 6
   reagent: Nocturine
+
+- type: borerChemical
+  id: borerDermaline
+  cost: 5
+  reagent: Dermaline
+
+- type: borerChemical
+  id: borerEpinephrine
+  cost: 5
+  reagent: Epinephrine
+
+- type: borerChemical
+  id: borerOculine
+  cost: 10
+  reagent: Oculine
+
+- type: borerChemical
+  id: borerSiderlac
+  cost: 10
+  reagent: Siderlac
+
+- type: borerChemical
+  id: borerStellibinin
+  cost: 10
+  reagent: Stellibinin
+
+- type: borerChemical
+  id: borerTranexamicAcid
+  cost: 6
+  reagent: TranexamicAcid
+
+- type: borerChemical
+  id: borerDesoxyephedrine
+  cost: 8
+  reagent: Desoxyephedrine
+
+- type: borerChemical
+  id: borerCarpoToxin
+  cost: 8
+  reagent: CarpoToxin
+
+- type: borerChemical
+  id: borerFluorosulfuricAcid
+  cost: 8
+  reagent: FluorosulfuricAcid
+
+- type: borerChemical
+  id: borerRazorium
+  cost: 8
+  reagent: Razorium

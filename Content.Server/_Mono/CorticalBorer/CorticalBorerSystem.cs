@@ -7,7 +7,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using System.Linq;
 using Content.Server.Administration;
+using Content.Server.Atmos.Components;
 using Content.Server.Body.Systems;
 using Content.Server.Chat.Managers;
 using Content.Server.DoAfter;
@@ -85,7 +87,10 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
 
         SubscribeLocalEvent<CorticalBorerComponent, MindRemovedMessage>(OnMindRemoved);
 
-        SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerHostDamageChangeEvent>(OnPurchaseHostDamage);
+        SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerHostDamageChangeEvent>(OnChangeHostDamage);
+        SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerChemicalPointCapChangeEvent>(OnChangeChemicalPointCap);
+        SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerBarotraumaRemovalEvent>(OnBarotraumaRemoved);
+        SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerChemicalDispenserAdditionEvent>(OnChemDispenserAdd);
 
         _actorQuery = GetEntityQuery<ActorComponent>();
     }
@@ -246,10 +251,54 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         UpdateUiState(ent);
     }
 
-    private void OnPurchaseHostDamage(Entity<CorticalBorerComponent> ent, ref CorticalBorerHostDamageChangeEvent args)
+    // Trauma
+    private void OnBarotraumaRemoved(Entity<CorticalBorerComponent> ent, ref CorticalBorerBarotraumaRemovalEvent args)
     {
+        if (args.Handled)
+            return;
+
+        if (TryComp<BarotraumaComponent>(ent, out var barotrauma))
+        {
+            EntityManager.RemoveComponent(ent, barotrauma);
+        }
+
+        args.Handled = true;
+    }
+
+    // Trauma
+    private void OnChangeChemicalPointCap(Entity<CorticalBorerComponent> ent, ref CorticalBorerChemicalPointCapChangeEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        ent.Comp.ChemicalPointCap += args.Delta;
+        Dirty(ent);
+
+        args.Handled = true;
+    }
+
+    // Trauma
+    private void OnChangeHostDamage(Entity<CorticalBorerComponent> ent, ref CorticalBorerHostDamageChangeEvent args)
+    {
+        if (args.Handled)
+            return;
+
         ent.Comp.HostDamage = args.HostDamage;
         Dirty(ent);
+
+        args.Handled = true;
+    }
+
+    // Trauma
+    private void OnChemDispenserAdd(Entity<CorticalBorerComponent> ent, ref CorticalBorerChemicalDispenserAdditionEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        ent.Comp.ReagentList.AddRange(args.Chemicals);
+        Dirty(ent);
+
+        args.Handled = true;
     }
 
     private void OnSetInjectAmountMessage(Entity<CorticalBorerComponent> ent, ref CorticalBorerDispenserSetInjectAmountMessage message)
@@ -258,30 +307,31 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         UpdateUiState(ent);
     }
 
-    private List<CorticalBorerDispenserItem> GetAllBorerChemicals(Entity<CorticalBorerComponent> ent)
+    // Trauma: changed from GetAllBorerChemicals. Should be more performant AND more versatile
+    private List<CorticalBorerDispenserItem> GetBorerChemicals(Entity<CorticalBorerComponent> ent)
     {
-        var clones = new List<CorticalBorerDispenserItem>();
-        foreach (var prototype in _proto.EnumeratePrototypes<CorticalBorerChemicalPrototype>())
+        var chemsList = new List<CorticalBorerDispenserItem>();
+        foreach (var chemId in ent.Comp.ReagentList)
         {
-            if (!_proto.TryIndex(prototype.Reagent, out ReagentPrototype? proto))
+            if (!_proto.TryIndex(chemId, out CorticalBorerChemicalPrototype? borerChem))
                 continue;
-
-            var reagentName = proto.LocalizedName;
-            var reagentId = proto.ID;
-            var cost = prototype.Cost;
+            if (!_proto.TryIndex(borerChem.Reagent, out ReagentPrototype? chemReagent))
+                continue;
+            var reagentName = chemReagent.LocalizedName;
+            var reagentId = chemReagent.ID;
+            var cost = borerChem.Cost;
             var amount = ent.Comp.InjectAmount;
             var chems = ent.Comp.ChemicalPoints;
-            var color = proto.SubstanceColor;
-
-            clones.Add(new CorticalBorerDispenserItem(reagentName,reagentId, cost, amount, chems, color)); // need color and name
+            var color = chemReagent.SubstanceColor;
+            chemsList.Add(new CorticalBorerDispenserItem(reagentName,reagentId, cost, amount, chems, color)); // need color and name
         }
 
-        return clones;
+        return chemsList;
     }
 
     private void UpdateUiState(Entity<CorticalBorerComponent> ent)
     {
-        var chems = GetAllBorerChemicals(ent);
+        var chems = GetBorerChemicals(ent);
 
         var state = new CorticalBorerDispenserBoundUserInterfaceState(chems, (int)ent.Comp.InjectAmount);
 
@@ -346,10 +396,6 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
             return;
 
         // Trauma: no clonespam bullshit, no infinite puppeting
-        // if (TryComp<MindContainerComponent>(host, out var mindContainer) &&
-        //     mindContainer.HasMind ||
-        //     HasComp<GhostRoleComponent>(host))
-        //     infestedComp.ControlTimeEnd = _timing.CurTime + comp.ControlDuration;
         infestedComp.ControlTimeEnd = _timing.CurTime + comp.ControlDuration;
 
         if (_mind.TryGetMind(worm, out var wormMind, out _))
@@ -487,6 +533,7 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
 
     private void OnMindRemoved(Entity<CorticalBorerComponent> ent, ref MindRemovedMessage args)
     {
+        // Trauma TODO this can break with aghosting, as aghost doesn't fire a MindRemovedMessage. Maybe look into this.
         if (!ent.Comp.ControllingHost)
             TryEjectBorer(ent); // No storing them in hosts if you don't have a soul
     }

@@ -15,6 +15,7 @@ using Content.Shared.Coordinates;
 using Content.Shared.Damage;
 using Content.Shared.Stunnable;
 using Robust.Shared.Containers;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.Manager;
 
@@ -246,8 +247,27 @@ public sealed class CorticalBorerDispenserItem(string reagentName, string reagen
 }
 
 [DataDefinition]
-public sealed partial class CorticalBorerHostDamageChangeEvent : EntityEventArgs
+public sealed partial class CorticalBorerHostDamageChangeEvent : HandledEntityEventArgs
 {
     [DataField]
     public DamageSpecifier? HostDamage;
+}
+
+[DataDefinition]
+public sealed partial class CorticalBorerChemicalPointCapChangeEvent : HandledEntityEventArgs
+{
+    [DataField]
+    public int Delta;
+}
+
+[DataDefinition]
+public sealed partial class CorticalBorerChemicalDispenserAdditionEvent : HandledEntityEventArgs
+{
+    [DataField]
+    public List<EntProtoId> Chemicals;
+}
+
+[DataDefinition]
+public sealed partial class CorticalBorerBarotraumaRemovalEvent : HandledEntityEventArgs
+{
 }
