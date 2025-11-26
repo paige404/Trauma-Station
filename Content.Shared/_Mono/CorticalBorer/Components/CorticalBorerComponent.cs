@@ -133,6 +133,7 @@ public sealed partial class CorticalBorerComponent : Component
     /// The list of <see cref="CorticalBorerChemicalPrototype"/>s that this borer can inject into hosts.
     /// See cortical_borer_chemicals.yml
     /// </summary>
+    [DataField]
     public List<EntProtoId> ReagentList = new()
     {
         "borerBicaridine",
@@ -145,8 +146,6 @@ public sealed partial class CorticalBorerComponent : Component
         "borerEphedrine",
         "borerNorepinephricAcid",
         "borerDexalinPlus",
-        "borerHeartbreakerToxin",
-        "borerNocturine",
     };
 
     public readonly List<EntProtoId> InitialCorticalBorerActions = new()

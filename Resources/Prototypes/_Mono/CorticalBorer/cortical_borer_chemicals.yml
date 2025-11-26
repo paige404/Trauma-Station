@@ -74,9 +74,19 @@
   reagent: Epinephrine
 
 - type: borerChemical
+  id: borerHyronalin
+  cost: 5
+  reagent: Hyronalin
+
+- type: borerChemical
   id: borerOculine
   cost: 10
   reagent: Oculine
+
+- type: borerChemical
+  id: borerSalicylicAcid
+  cost: 20
+  reagent: SalicylicAcid
 
 - type: borerChemical
   id: borerSiderlac
@@ -99,13 +109,23 @@
   reagent: Desoxyephedrine
 
 - type: borerChemical
-  id: borerCarpoToxin
+  id: borerPlasma
+  cost: 6
+  reagent: Plasma
+
+- type: borerChemical
+  id: borerUnstableMutagen
   cost: 8
+  reagent: UnstableMutagen
+
+- type: borerChemical
+  id: borerCarpoToxin
+  cost: 10
   reagent: CarpoToxin
 
 - type: borerChemical
   id: borerFluorosulfuricAcid
-  cost: 8
+  cost: 10
   reagent: FluorosulfuricAcid
 
 - type: borerChemical

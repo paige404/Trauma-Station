@@ -10,3 +10,14 @@
     Piercing: 30
     Heat: 10
     Structural: 10
+
+- type: damageModifierSet
+  id: ToughBorer
+  coefficients:
+    Blunt: 0.6
+    Slash: 0.6
+    Pierce: 0.6
+    Heat: 0.6
+    Shock: 0.6
+    Cold: 0.6
+    Caustic: 0.6

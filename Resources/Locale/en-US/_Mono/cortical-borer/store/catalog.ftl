@@ -16,6 +16,10 @@ cortical-borer-symbiosis-medicines-name = Medicines
 cortical-borer-symbiosis-medicines-desc =
     You generate some helpful chemicals for your hosts, but with some effort you could produce much more complex medicinal compounds.
 
+cortical-borer-symbiosis-advancedmedicines-name = Advanced Medicines
+cortical-borer-symbiosis-advancedmedicines-desc =
+    You could synthesize more potent and niche medicinal compounds, but such biological specialization would prevent the development of some toxins.
+
 # Tenacity
 
 cortical-borer-tenacity-chemicalreserves-name = Chemical Reserves
@@ -26,6 +30,10 @@ cortical-borer-tenacity-lowpressureadaptation-name = Low Pressure Adaptation
 cortical-borer-tenacity-lowpressureadaptation-desc =
     Your soft body has left you vulnerable to sudden barometric pressure changes. No longer.
 
+cortical-borer-tenacity-toughcarapace-name = Tough Carapace
+cortical-borer-tenacity-toughcarapace-desc =
+    It is a dangerous world for a worm. You could grow a carapace to protect yourself from harm.
+
 # Domination
 
 cortical-borer-domination-malignant-name = Malignant
@@ -35,3 +43,11 @@ cortical-borer-domination-malignant-desc =
 cortical-borer-domination-psychicblast-name = Psychic Blast
 cortical-borer-domination-psychicblast-desc =
     You can weaponize your telepathic abilities to stun a host, leaving them defenseless against infestation.
+
+cortical-borer-domination-toxins-name = Toxins
+cortical-borer-domination-toxins-desc =
+    You can generate some toxins to threaten and coerce an uncooperative host. With effort, you could expand your repertoire to deadlier reagents.
+
+cortical-borer-domination-lethaltoxins-name = Lethal Toxins
+cortical-borer-domination-lethaltoxins-desc =
+    You could develop yet deadlier and more complex toxins, but such biological specialization will prevent you from developing the most advanced medicines.

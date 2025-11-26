@@ -34,6 +34,8 @@ public partial class SharedCorticalBorerSystem : EntitySystem
     [Dependency] protected readonly SharedContainerSystem _container = default!;
     [Dependency] protected readonly SharedStunSystem _stun = default!; // Trauma
 
+    private ISawmill _sawmill = default!;
+
     public bool CanUseAbility(Entity<CorticalBorerComponent> ent, EntityUid target)
     {
         if (_statusEffects.HasStatusEffect(target,
@@ -247,27 +249,34 @@ public sealed class CorticalBorerDispenserItem(string reagentName, string reagen
 }
 
 [DataDefinition]
-public sealed partial class CorticalBorerHostDamageChangeEvent : HandledEntityEventArgs
+public sealed partial class CorticalBorerHostDamageChangeEvent : EntityEventArgs
 {
     [DataField]
     public DamageSpecifier? HostDamage;
 }
 
 [DataDefinition]
-public sealed partial class CorticalBorerChemicalPointCapChangeEvent : HandledEntityEventArgs
+public sealed partial class CorticalBorerChemicalPointCapChangeEvent : EntityEventArgs
 {
     [DataField]
     public int Delta;
 }
 
 [DataDefinition]
-public sealed partial class CorticalBorerChemicalDispenserAdditionEvent : HandledEntityEventArgs
+public sealed partial class CorticalBorerChemicalDispenserAdditionEvent : EntityEventArgs
 {
     [DataField]
     public List<EntProtoId> Chemicals;
 }
 
 [DataDefinition]
-public sealed partial class CorticalBorerBarotraumaRemovalEvent : HandledEntityEventArgs
+public sealed partial class CorticalBorerBarotraumaRemovalEvent : EntityEventArgs
 {
+}
+
+[DataDefinition]
+public sealed partial class CorticalBorerDamageModifierChangeEvent : EntityEventArgs
+{
+    [DataField]
+    public EntProtoId ModifierSet;
 }

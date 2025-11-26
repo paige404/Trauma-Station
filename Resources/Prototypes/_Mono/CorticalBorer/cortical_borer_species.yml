@@ -75,8 +75,8 @@
         Bloodloss: -1
     bleedReductionAmount: 2 # bleeding stops faster
   - type: MovementSpeedModifier
-    baseWalkSpeed : 1.9
-    baseSprintSpeed : 7.5
+    baseWalkSpeed : 2.5
+    baseSprintSpeed : 5
   - type: Tag
     tags:
     - Meat

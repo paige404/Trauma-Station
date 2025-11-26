@@ -69,10 +69,14 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
     [Dependency] private readonly StoreSystem _store = default!;
     [Dependency] private readonly DamageableSystem _damage = default!;
 
+    private ISawmill _sawmill = default!;
+
     private EntityQuery<ActorComponent> _actorQuery;
     // Trauma end
     public override void Initialize()
     {
+        _sawmill = Logger.GetSawmill("corticalborer");
+        _sawmill.Level = LogLevel.Info;
         SubscribeAbilities();
 
         SubscribeLocalEvent<CorticalBorerComponent, ComponentStartup>(OnStartup);
@@ -87,12 +91,21 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
 
         SubscribeLocalEvent<CorticalBorerComponent, MindRemovedMessage>(OnMindRemoved);
 
+        // Trauma: worm evolution store purchase events
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerHostDamageChangeEvent>(OnChangeHostDamage);
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerChemicalPointCapChangeEvent>(OnChangeChemicalPointCap);
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerBarotraumaRemovalEvent>(OnBarotraumaRemoved);
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerChemicalDispenserAdditionEvent>(OnChemDispenserAdd);
+        SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerDamageModifierChangeEvent>(OnDamageModifierChange);
 
         _actorQuery = GetEntityQuery<ActorComponent>();
+    }
+
+    private void OnDamageModifierChange(Entity<CorticalBorerComponent> ent, ref CorticalBorerDamageModifierChangeEvent args)
+    {
+        if (!TryComp<DamageableComponent>(ent, out var damageable))
+            return;
+        _damage.SetDamageModifierSetId(ent.Owner, args.ModifierSet);
     }
 
     private void OnStartup(Entity<CorticalBorerComponent> ent, ref ComponentStartup args)
@@ -254,51 +267,32 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
     // Trauma
     private void OnBarotraumaRemoved(Entity<CorticalBorerComponent> ent, ref CorticalBorerBarotraumaRemovalEvent args)
     {
-        if (args.Handled)
-            return;
-
         if (TryComp<BarotraumaComponent>(ent, out var barotrauma))
         {
             EntityManager.RemoveComponent(ent, barotrauma);
         }
-
-        args.Handled = true;
     }
 
     // Trauma
     private void OnChangeChemicalPointCap(Entity<CorticalBorerComponent> ent, ref CorticalBorerChemicalPointCapChangeEvent args)
     {
-        if (args.Handled)
-            return;
-
         ent.Comp.ChemicalPointCap += args.Delta;
         Dirty(ent);
-
-        args.Handled = true;
     }
 
     // Trauma
     private void OnChangeHostDamage(Entity<CorticalBorerComponent> ent, ref CorticalBorerHostDamageChangeEvent args)
     {
-        if (args.Handled)
-            return;
-
         ent.Comp.HostDamage = args.HostDamage;
         Dirty(ent);
-
-        args.Handled = true;
     }
 
     // Trauma
     private void OnChemDispenserAdd(Entity<CorticalBorerComponent> ent, ref CorticalBorerChemicalDispenserAdditionEvent args)
     {
-        if (args.Handled)
-            return;
-
         ent.Comp.ReagentList.AddRange(args.Chemicals);
         Dirty(ent);
-
-        args.Handled = true;
+        UpdateUiState(ent);
     }
 
     private void OnSetInjectAmountMessage(Entity<CorticalBorerComponent> ent, ref CorticalBorerDispenserSetInjectAmountMessage message)

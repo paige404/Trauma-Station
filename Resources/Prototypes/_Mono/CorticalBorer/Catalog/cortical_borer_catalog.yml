@@ -28,15 +28,13 @@
   description: cortical-borer-symbiosis-medicines-desc
   icon:
     sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
-    state: hivemind_access
-  priority: 0
+    state: epinephrine_overdose
+  priority: 1
   productEvent: !type:CorticalBorerChemicalDispenserAdditionEvent
     chemicals:
     - borerDermaline
     - borerEpinephrine
-    - borerOculine
-    - borerSiderlac
-    - borerStellibinin
+    - borerHyronalin
     - borerTranexamicAcid
   raiseProductEventOnUser: true
   cost:
@@ -47,6 +45,33 @@
   - !type:BuyBeforeCondition
     blacklist:
     - CorticalBorerMenuSymbiosisMedicines
+
+- type: listing
+  id: CorticalBorerMenuSymbiosisAdvancedMedicines
+  name: cortical-borer-symbiosis-advancedmedicines-name
+  description: cortical-borer-symbiosis-advancedmedicines-desc
+  icon:
+    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+    state: epinephrine_overdose
+  priority: 1
+  productEvent: !type:CorticalBorerChemicalDispenserAdditionEvent
+    chemicals:
+    - borerOculine
+    - borerSalicylicAcid
+    - borerSiderlac
+    - borerStellibinin
+  raiseProductEventOnUser: true
+  cost:
+    CorticalBorerEvolutionPoint: 2
+  categories:
+  - CorticalBorerAbilityCategorySymbiosis
+  conditions:
+  - !type:BuyBeforeCondition
+    whitelist:
+    - CorticalBorerMenuSymbiosisMedicines
+    blacklist:
+    - CorticalBorerMenuSymbiosisAdvancedMedicines
+    - CorticalBorerMenuDominationLethalToxins
 
 # Tenacity
 - type: listing
@@ -87,6 +112,26 @@
   - !type:BuyBeforeCondition
     blacklist:
     - CorticalBorerMenuTenacityChemicalReserves
+
+- type: listing
+  id: CorticalBorerMenuTenacityToughCarapace
+  name: cortical-borer-tenacity-toughcarapace-name
+  description: cortical-borer-tenacity-toughcarapace-desc
+  icon:
+    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+    state: chitinous_armor
+  priority: 1
+  productEvent: !type:CorticalBorerDamageModifierChangeEvent
+    modifierSet: ToughBorer
+  raiseProductEventOnUser: true
+  cost:
+    CorticalBorerEvolutionPoint: 1
+  categories:
+  - CorticalBorerAbilityCategoryTenacity
+  conditions:
+  - !type:BuyBeforeCondition
+    blacklist:
+    - CorticalBorerMenuTenacityToughCarapace
 
 # Domination
 - type: listing
@@ -129,3 +174,52 @@
   - !type:BuyBeforeCondition
     blacklist:
     - CorticalBorerMenuDominationPsychicBlast
+
+- type: listing
+  id: CorticalBorerMenuDominationToxins
+  name: cortical-borer-domination-toxins-name
+  description: cortical-borer-domination-toxins-desc
+  icon:
+    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+    state: biodegrade
+  priority: 1
+  productEvent: !type:CorticalBorerChemicalDispenserAdditionEvent
+    chemicals:
+    - borerNocturine
+    - borerHeartbreakerToxin
+    - borerPlasma
+  raiseProductEventOnUser: true
+  cost:
+    CorticalBorerEvolutionPoint: 1
+  categories:
+  - CorticalBorerAbilityCategoryDomination
+  conditions:
+  - !type:BuyBeforeCondition
+    blacklist:
+    - CorticalBorerMenuDominationToxins
+
+- type: listing
+  id: CorticalBorerMenuDominationLethalToxins
+  name: cortical-borer-domination-lethaltoxins-name
+  description: cortical-borer-domination-lethaltoxins-desc
+  icon:
+    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+    state: biodegrade
+  priority: 1
+  productEvent: !type:CorticalBorerChemicalDispenserAdditionEvent
+    chemicals:
+    - borerCarpoToxin
+    - borerFluorosulfuricAcid
+    - borerRazorium
+  raiseProductEventOnUser: true
+  cost:
+    CorticalBorerEvolutionPoint: 2
+  categories:
+  - CorticalBorerAbilityCategoryDomination
+  conditions:
+  - !type:BuyBeforeCondition
+    whitelist:
+    - CorticalBorerMenuDominationToxins
+    blacklist:
+    - CorticalBorerMenuDominationLethalToxins
+    - CorticalBorerMenuSymbiosisAdvancedMedicines
