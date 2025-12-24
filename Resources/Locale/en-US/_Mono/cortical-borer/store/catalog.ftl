@@ -1,9 +1,3 @@
-# SPDX-FileCopyrightText: 2024 Piras314 <p1r4s@proton.me>
-# SPDX-FileCopyrightText: 2025 Aiden <28298836+Aidenkrz@users.noreply.github.com>
-# SPDX-FileCopyrightText: 2025 Aiden <aiden@djkraz.com>
-# SPDX-FileCopyrightText: 2025 Aviu00 <93730715+Aviu00@users.noreply.github.com>
-# SPDX-FileCopyrightText: 2025 Ilya246 <57039557+Ilya246@users.noreply.github.com>
-#
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Symbiosis
@@ -32,7 +26,11 @@ cortical-borer-tenacity-lowpressureadaptation-desc =
 
 cortical-borer-tenacity-toughcarapace-name = Tough Carapace
 cortical-borer-tenacity-toughcarapace-desc =
-    It is a dangerous world for a worm. You could grow a carapace to protect yourself from harm.
+    It is a dangerous world for a worm. You could grow a carapace to protect yourself from harm. Incompatible with Slither.
+
+cortical-borer-tenacity-slither-name = Slither
+cortical-borer-tenacity-slither-desc =
+    By secreting propulsive chemicals from your skin, you can slither faster than ever. Incompatible with Tough Carapace.
 
 # Domination
 
@@ -51,3 +49,7 @@ cortical-borer-domination-toxins-desc =
 cortical-borer-domination-lethaltoxins-name = Lethal Toxins
 cortical-borer-domination-lethaltoxins-desc =
     You could develop yet deadlier and more complex toxins, but such biological specialization will prevent you from developing the most advanced medicines.
+
+cortical-borer-domination-divewormmutation-name = Diveworm Mutation
+cortical-borer-domination-divewormmutation-desc =
+    If you could implant eggs in a host's corpse, your children could burst forth FAR stronger.

@@ -133,22 +133,13 @@ public sealed partial class CorticalBorerComponent : Component
     /// The list of <see cref="CorticalBorerChemicalPrototype"/>s that this borer can inject into hosts.
     /// See cortical_borer_chemicals.yml
     /// </summary>
+    /// TODO yaml these
     [DataField]
-    public List<EntProtoId> ReagentList = new()
-    {
-        "borerBicaridine",
-        "borerKelotane",
-        "borerSaline",
-        "borerEthanol",
-        "borerMuteToxin",
-        "borerCharcoal",
-        "borerHappiness",
-        "borerEphedrine",
-        "borerNorepinephricAcid",
-        "borerDexalinPlus",
-    };
+    public List<EntProtoId> ReagentList;
 
-    public readonly List<EntProtoId> InitialCorticalBorerActions = new()
+    // TODO yaml these
+    [DataField]
+    public List<EntProtoId> InitialActions = new()
     {
         "ActionCorticalBorerInfest",
         "ActionCorticalBorerEject",
@@ -159,22 +150,17 @@ public sealed partial class CorticalBorerComponent : Component
         "ActionCorticalBorerEvolutionMenu",
     };
 
-    // TODO use this or get rid
-    public readonly List<EntProtoId> InfestCorticalBorerActions = new()
-    {
-        "ActionCorticalBorerEject",
-        "ActionCorticalBorerChemMenu",
-        "ActionCheckBlood",
-        "ActionInvadeThoughts",
-        "ActionControlHost",
-        "ActionCorticalBorerEvolutionMenu",
-    };
-
-    public readonly List<EntProtoId> ControlCorticalBorerActions = new()
+    [DataField]
+    public List<EntProtoId> ControlActions = new()
     {
         "ActionLayEggHost",
         "ActionEndControlHost",
     };
+
+    public bool HasHost()
+    {
+        return Host != null;
+    }
 }
 
 

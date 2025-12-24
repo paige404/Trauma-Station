@@ -109,9 +109,9 @@
   reagent: Desoxyephedrine
 
 - type: borerChemical
-  id: borerPlasma
-  cost: 6
-  reagent: Plasma
+  id: borerPhlogiston
+  cost: 10
+  reagent: Phlogiston
 
 - type: borerChemical
   id: borerUnstableMutagen

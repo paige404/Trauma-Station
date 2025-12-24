@@ -139,3 +139,16 @@
     whitelist:
       components:
       - Body
+
+# TODO
+#- type: entity
+#  id: ActionCorticalBorerImplantEgg
+#  name: Implant Egg
+#  description: Implant an egg in a dead host, to produce mighty offspring. Costs 200 chemicals. # needs to be changed if the base chem cost is changed
+#  components:
+#  - type: Action
+#    icon: _Mono/Interface/Action/borer_egg.png # TODO
+#    useDelay: 5
+#  - type: InstantAction
+#    event: !type:CorticalImplantEggEvent
+#      eggProto: DeathWormLarva

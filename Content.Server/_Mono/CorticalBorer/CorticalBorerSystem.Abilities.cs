@@ -5,6 +5,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Server.Ghost.Roles.Components;
 using Content.Server.Medical;
 using Content.Shared._Mono.CorticalBorer;
 using Content.Shared._Mono.CorticalBorer.Components;
@@ -39,8 +40,31 @@ public sealed partial class CorticalBorerSystem
 
         SubscribeLocalEvent<CorticalBorerComponent, CorticalInvadeThoughtsEvent>(OnInvadeThoughts); // Trauma
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerEvolutionMenuEvent>(OnOpenEvolutionMenu); // Trauma
-
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerPsychicBlastEvent>(OnPsychicBlast); // Trauma
+        SubscribeLocalEvent<CorticalBorerComponent, CorticalImplantEggEvent>(OnImplantEgg); // Trauma
+
+    }
+
+    private void OnImplantEgg(Entity<CorticalBorerComponent> ent, ref CorticalImplantEggEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        if (!ent.Comp.HasHost())
+        {
+            _popup.PopupEntity(Loc.GetString("cortical-borer-no-host"), ent, ent, PopupType.Medium);
+            return;
+        }
+
+        if (ent.Comp.EggCost > ent.Comp.ChemicalPoints)
+        {
+            _popup.PopupEntity(Loc.GetString("cortical-borer-not-enough-chem"), ent, ent, PopupType.Medium);
+            return;
+        }
+        ImplantEgg(ent, args.EggProto);
+        UpdateChems(ent, -ent.Comp.EggCost);
+
+        args.Handled = true;
     }
 
     private void OnChemicalMenu(Entity<CorticalBorerComponent> ent, ref CorticalChemMenuActionEvent args)
@@ -82,15 +106,6 @@ public sealed partial class CorticalBorerSystem
 
             return;
         }
-
-        // Trauma: this isn't really the problem that it would be on Mono
-        // // Prevent borers from infesting salvage/exped mobs. :o(
-        // if (HasComp<NFSalvageMobRestrictionsComponent>(target))
-        // {
-        //     _popup.PopupEntity(Loc.GetString("cortical-borer-invalid-host", ("target", targetIdentity)), uid, uid, PopupType.Medium);
-        //
-        //     return;
-        // }
 
         // Trauma: prevent borers from infesting mice, mothroaches, and similar little guys
         if (HasComp<ItemComponent>(target))
@@ -221,7 +236,11 @@ public sealed partial class CorticalBorerSystem
             return;
         }
 
-        TakeControlHost(ent, infestedComp);
+        if (TakeControlHost(ent, infestedComp))
+        {
+            if (TryComp<GhostRoleComponent>(ent, out var ghostRole))
+                _ghost.UnregisterGhostRole((ent, ghostRole)); // prevent players from taking the worm role once mind isn't in the worm
+        }
 
         args.Handled = true;
     }
@@ -230,8 +249,11 @@ public sealed partial class CorticalBorerSystem
     {
         if (args.Handled)
             return;
+        var worm = host.Comp.Borer;
 
         EndControl(host.Comp.Borer);
+        if (TryComp<GhostRoleComponent>(worm, out var ghostRole))
+            _ghost.RegisterGhostRole((worm, ghostRole)); // re-enable the ghost role after you return to the body
 
         args.Handled = true;
     }
@@ -298,7 +320,7 @@ public sealed partial class CorticalBorerSystem
     {
         if (args.Handled)
             return;
-        if (ent.Comp.Host is not null)
+        if (ent.Comp.HasHost())
         {
             _popup.PopupEntity(Loc.GetString("cortical-borer-has-host"), ent, ent, PopupType.Medium);
             return;

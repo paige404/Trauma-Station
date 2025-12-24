@@ -120,7 +120,7 @@
   icon:
     sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
     state: chitinous_armor
-  priority: 1
+  priority: 2
   productEvent: !type:CorticalBorerDamageModifierChangeEvent
     modifierSet: ToughBorer
   raiseProductEventOnUser: true
@@ -132,6 +132,29 @@
   - !type:BuyBeforeCondition
     blacklist:
     - CorticalBorerMenuTenacityToughCarapace
+    - CorticalBorerMenuTenacitySlither
+
+- type: listing
+  id: CorticalBorerMenuTenacitySlither
+  name: cortical-borer-tenacity-slither-name
+  description: cortical-borer-tenacity-slither-desc
+  icon:
+    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+    state: strained_muscles
+  priority: 2
+  productEvent: !type:CorticalBorerMovementSpeedChangeEvent
+    baseWalkSpeed: 2.5
+    baseSprintSpeed: 6
+  raiseProductEventOnUser: true
+  cost:
+    CorticalBorerEvolutionPoint: 1
+  categories:
+  - CorticalBorerAbilityCategoryTenacity
+  conditions:
+  - !type:BuyBeforeCondition
+    blacklist:
+    - CorticalBorerMenuTenacityToughCarapace
+    - CorticalBorerMenuTenacitySlither
 
 # Domination
 - type: listing
@@ -165,7 +188,10 @@
     sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
     state: shriek_dissonant
   priority: 1
-  productAction: ActionCorticalBorerPsychicBlast # TODO this gets added to the Mind, not the borer itself. Little fucky, maybe fix that
+  productEvent: !type:CorticalBorerUnlockActionsEvent
+    actions:
+    - ActionCorticalBorerPsychicBlast
+  raiseProductEventOnUser: true
   cost:
     CorticalBorerEvolutionPoint: 2
   categories:
@@ -182,12 +208,12 @@
   icon:
     sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
     state: biodegrade
-  priority: 1
+  priority: 2
   productEvent: !type:CorticalBorerChemicalDispenserAdditionEvent
     chemicals:
     - borerNocturine
     - borerHeartbreakerToxin
-    - borerPlasma
+    - borerRazorium
   raiseProductEventOnUser: true
   cost:
     CorticalBorerEvolutionPoint: 1
@@ -205,12 +231,12 @@
   icon:
     sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
     state: biodegrade
-  priority: 1
+  priority: 2
   productEvent: !type:CorticalBorerChemicalDispenserAdditionEvent
     chemicals:
     - borerCarpoToxin
     - borerFluorosulfuricAcid
-    - borerRazorium
+    - borerPhlogiston
   raiseProductEventOnUser: true
   cost:
     CorticalBorerEvolutionPoint: 2
@@ -223,3 +249,27 @@
     blacklist:
     - CorticalBorerMenuDominationLethalToxins
     - CorticalBorerMenuSymbiosisAdvancedMedicines
+
+# TODO
+#- type: listing
+#  id: CorticalBorerMenuDominationDivewormMutation
+#  name: cortical-borer-domination-divewormmutation-name
+#  description: cortical-borer-domination-divewormmutation-desc
+#  icon:
+#    sprite: _Goobstation/Changeling/changeling_abilities.rsi # TODO
+#    state: lay_egg
+#  priority: 3
+#  productEvent: !type:CorticalBorerUnlockActionsEvent
+#    actions:
+#    - ActionCorticalBorerImplantEgg
+#  raiseProductEventOnUser: true
+#  cost:
+#    CorticalBorerEvolutionPoint: 2
+#  categories:
+#  - CorticalBorerAbilityCategoryDomination
+#  conditions:
+#  - !type:BuyBeforeCondition
+#    whitelist:
+#    - CorticalBorerMenuDominationMalignant
+#    blacklist:
+#    - CorticalBorerMenuDominationDivewormMutation
