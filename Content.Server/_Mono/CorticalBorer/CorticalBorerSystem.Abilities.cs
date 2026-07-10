@@ -5,6 +5,8 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Server._Mono.Objectives.Components;
+using Content.Server.Antag.Components;
 using Content.Server.Ghost.Roles.Components;
 using Content.Server.Medical;
 using Content.Shared._Mono.CorticalBorer;
@@ -41,30 +43,7 @@ public sealed partial class CorticalBorerSystem
         SubscribeLocalEvent<CorticalBorerComponent, CorticalInvadeThoughtsEvent>(OnInvadeThoughts); // Trauma
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerEvolutionMenuEvent>(OnOpenEvolutionMenu); // Trauma
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerPsychicBlastEvent>(OnPsychicBlast); // Trauma
-        SubscribeLocalEvent<CorticalBorerComponent, CorticalImplantEggEvent>(OnImplantEgg); // Trauma
 
-    }
-
-    private void OnImplantEgg(Entity<CorticalBorerComponent> ent, ref CorticalImplantEggEvent args)
-    {
-        if (args.Handled)
-            return;
-
-        if (!ent.Comp.HasHost())
-        {
-            _popup.PopupEntity(Loc.GetString("cortical-borer-no-host"), ent, ent, PopupType.Medium);
-            return;
-        }
-
-        if (ent.Comp.EggCost > ent.Comp.ChemicalPoints)
-        {
-            _popup.PopupEntity(Loc.GetString("cortical-borer-not-enough-chem"), ent, ent, PopupType.Medium);
-            return;
-        }
-        ImplantEgg(ent, args.EggProto);
-        UpdateChems(ent, -ent.Comp.EggCost);
-
-        args.Handled = true;
     }
 
     private void OnChemicalMenu(Entity<CorticalBorerComponent> ent, ref CorticalChemMenuActionEvent args)
@@ -163,7 +142,10 @@ public sealed partial class CorticalBorerSystem
         if (HasComp<CorticalBorerComponent>(target))
             return;
 
-        InfestTarget(ent, target);
+        if (InfestTarget(ent, target))
+        {
+            UpdateInfectedObjective(ent.Owner, 1);
+        }
         args.Handled = true;
     }
 
@@ -183,7 +165,10 @@ public sealed partial class CorticalBorerSystem
         if (!CanUseAbility(ent, comp.Host.Value))
             return;
 
-        TryEjectBorer(ent);
+        if (TryEjectBorer(ent))
+        {
+            UpdateInfectedObjective(ent.Owner, -1);
+        }
 
         args.Handled = true;
     }
@@ -272,8 +257,12 @@ public sealed partial class CorticalBorerSystem
         }
 
         _vomit.Vomit(host, -20, -20); // half as much chem vomit, a lot that is coming up is the egg
-        LayEgg(borer);
-        UpdateChems(borer, -borer.Comp.EggCost);
+        if (LayEgg(borer) is { } egg)
+        {
+            UpdateChems(borer, -borer.Comp.EggCost);
+            UpdateEggsObjective(borer, 1);
+            _rule.AssociateEgg(borer, egg);
+        }
 
         args.Handled = true;
     }

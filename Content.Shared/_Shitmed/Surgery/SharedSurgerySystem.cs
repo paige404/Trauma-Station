@@ -16,6 +16,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using System.Linq;
+using Content.Shared._Mono.CorticalBorer;
+using Content.Shared._Mono.CorticalBorer.Components;
 using Content.Shared._Shitmed.Medical.Surgery.Conditions;
 using Content.Shared._Shitmed.Medical.Surgery.Consciousness.Systems;
 using Content.Shared._Shitmed.Medical.Surgery.Pain.Systems;
@@ -24,7 +26,6 @@ using Content.Shared._Shitmed.Medical.Surgery.Steps.Parts;
 using Content.Shared._Shitmed.Medical.Surgery.Wounds.Systems;
 using Content.Shared._Shitmed.Medical.Surgery.Wounds.Components;
 using Content.Shared._Shitmed.Medical.Surgery.Traumas.Systems;
-using Content.Shared._Mono.CorticalBorer;
 using Content.Shared.Buckle.Components;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Part;
@@ -109,7 +110,7 @@ public abstract partial class SharedSurgerySystem : EntitySystem
         SubscribeLocalEvent<SurgeryCloseIncisionConditionComponent, SurgeryValidEvent>(OnCloseIncisionValid);
         SubscribeLocalEvent<SurgeryHasBodyConditionComponent, SurgeryValidEvent>(OnHasBodyConditionValid);
         // Monolith Cortical Borer Port
-        SubscribeLocalEvent<_Mono.CorticalBorer.Components.SurgeryCorticalBorerConditionComponent, SurgeryValidEvent>(OnCorticalBorerValid);
+        SubscribeLocalEvent<SurgeryCorticalBorerConditionComponent, SurgeryValidEvent>(OnCorticalBorerValid);
         // Monolith Port end
         SubscribeLocalEvent<SurgeryPartConditionComponent, SurgeryValidEvent>(OnPartConditionValid);
         SubscribeLocalEvent<SurgeryOrganConditionComponent, SurgeryValidEvent>(OnOrganConditionValid);
@@ -221,9 +222,9 @@ public abstract partial class SharedSurgerySystem : EntitySystem
     }
 
     // Monolith Cortical Borer Port
-    private void OnCorticalBorerValid(Entity<_Mono.CorticalBorer.Components.SurgeryCorticalBorerConditionComponent> ent, ref SurgeryValidEvent args)
+    private void OnCorticalBorerValid(Entity<SurgeryCorticalBorerConditionComponent> ent, ref SurgeryValidEvent args)
     {
-        if (!HasComp<_Mono.CorticalBorer.Components.CorticalBorerInfestedComponent>(args.Body) ||
+        if (!HasComp<CorticalBorerInfestedComponent>(args.Body) ||
             !HasComp<IncisionOpenComponent>(args.Part))
             args.Cancelled = true;
     }

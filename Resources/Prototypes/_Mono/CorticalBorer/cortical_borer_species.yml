@@ -113,7 +113,7 @@
     description: cortical-borer-ghostrole-desc
     rules: cortical-borer-ghostrole-rules
     mindRoles:
-    - MindRoleGhostRoleFreeAgent
+    - MindRoleCorticalBorer
   - type: GhostTakeoverAvailable
   - type: Sprite
     drawdepth: SmallMobs
@@ -183,7 +183,7 @@
     state: icon
   - type: Item
     size: Tiny
-  - type: GhostRole
+  - type: GhostRole #TODO
     name: cortical-borer-ghostrole-name
     description: cortical-borer-ghostrole-desc
     rules: ghost-role-information-freeagent-rules
@@ -191,9 +191,11 @@
     - !type:OverallPlaytimeRequirement
       time: 36000 # 10 hrs
     mindRoles:
-    - MindRoleGhostRoleFreeAgent
-  - type: GhostRoleMobSpawner
-    prototype: MobCorticalBorer
+    - MindRoleCorticalBorer
+#    raffle: TODO uncomment before final PR
+#      settings: default
+#  - type: GhostRoleMobSpawner
+#    prototype: MobCorticalBorer
   - type: Damageable
     damageContainer: Biological
   - type: Destructible
@@ -210,99 +212,3 @@
 #  - type: GuideHelp # TODO
 #    guides:
 #    - CorticalBorerGuide
-
-# TODO
-#- type: entity
-#  name: Olgoi Khorkoi
-#  parent: BaseBrainWorm
-#  id: MobDeathWorm
-#  description: The deathworm. This is how big cortical borers get in Space-Mongolia.
-#  components:
-#  - type: GhostRole # TODO update for deathworm
-#    makeSentient: true
-#    allowSpeech: False
-#    allowMovement: true
-#    requirements:
-#    - !type:OverallPlaytimeRequirement
-#      time: 36000 # 10 hrs
-#    name: cortical-borer-ghostrole-name
-#    description: cortical-borer-ghostrole-desc
-#    rules: cortical-borer-ghostrole-rules
-#    mindRoles:
-#    - MindRoleGhostRoleFreeAgent
-#  - type: GhostTakeoverAvailable
-#  - type: Sprite
-#    drawdepth: Mobs
-#    sprite: Mobs/Aliens/Xenos/purple_snake.rsi
-#    layers:
-#    - map: [ "enum.DamageStateVisualLayers.Base" ]
-#      state: purple_snake
-#  - type: DamageStateVisuals
-#    states:
-#      Alive:
-#        Base: purple_snake
-#      Critical:
-#        Base: dead_purple_snake
-#      Dead:
-#        Base: dead_purple_snake
-#  - type: Damageable
-#    damageContainer: Biological
-#    damageModifierSet: ToughBorer
-#  - type: Fixtures
-#    fixtures:
-#      fix1:
-#        shape:
-#          !type:PhysShapeCircle
-#          radius: 0.35
-#        density: 25
-#        mask:
-#        - MobMask
-#        layer:
-#        - MobLayer
-#  - type: MobThresholds
-#    thresholds:
-#      0: Alive
-#      50: Critical
-#      60: Dead
-#  - type: Bloodstream
-#    bloodlossDamage:
-#      types:
-#        Bloodloss: 0.5
-#    bloodlossHealDamage:
-#      types:
-#        Bloodloss: -1
-#    bleedReductionAmount: 2 # bleeding stops faster
-#  - type: MovementSpeedModifier
-#    baseWalkSpeed: 3
-#    baseSprintSpeed: 7
-#  - type: CorticalBorer
-#    eggProto: "CorticalBorerEgg"
-#    addOnInfest:
-#    - type: PressureImmunity
-#    removeOnInfest:
-#    - type: CanEscapeInventory
-#    hostDamage:
-#      types:
-#        Poison: 0.5
-#    reagentList:
-#    - borerEthanol
-#    - borerMuteToxin
-#    - borerNorepinephricAcid
-#    - borerDexalinPlus
-#    - borerCarpoToxin
-#    - borerFluorosulfuricAcid
-#    - borerPhlogiston
-#    - borerNocturine
-#    - borerHeartbreakerToxin
-#    - borerPhlogiston
-#    - borerRazorium
-#  #  - type: GuideHelp # TODO
-#  #    guides:
-#  #    - CorticalBorerGuide
-
-# TODO
-#- type: entity
-#  parent: CorticalBorerEgg
-#  id: DeathWormLarva
-#  name: deathworm larva
-#  description: This twisted cortical borer is growing far too large on the internal organs of its host.

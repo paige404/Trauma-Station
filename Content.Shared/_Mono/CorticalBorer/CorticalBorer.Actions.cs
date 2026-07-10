@@ -28,10 +28,3 @@ public sealed partial class CorticalBorerPsychicBlastEvent : EntityTargetActionE
 {
 
 } // Trauma
-
-public sealed partial class CorticalImplantEggEvent : InstantActionEvent
-{
-    [DataField]
-    public string EggProto;
-
-} // Trauma

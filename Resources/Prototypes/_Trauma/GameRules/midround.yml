@@ -1,0 +1,39 @@
+- type: entity
+  parent: BaseGameRule
+  id: CorticalBorerInfestation
+  components:
+  - type: StationEvent
+    weight: 3
+    duration: null
+    minimumPlayers: 0 # 20
+    earliestStart: 0 # 20
+    maxOccurrences: 1
+    chaos:
+      Hostile: 200
+      Medical: 400
+      Death: 200
+    eventType: HostilesSpawn
+  - type: GameRule
+    chaosScore: 400
+  - type: VentSpawnRule
+  - type: AntagSpawner
+    prototype: MobCorticalBorer
+  - type: CorticalBorerRule
+  - type: AntagObjectives
+    objectives:
+    - CorticalBorerHiveEscapeObjective
+    - CorticalBorerEggsObjective
+    - CorticalBorerInfectedObjective
+  - type: AntagSelection
+    agentName: xenomorph-round-end-agent-name # TODO
+    definitions:
+    - spawnerPrototype: SpawnPointCorticalBorer
+      min: 1
+      max: 2
+      pickPlayer: false
+      briefing:
+        text: xenomorph-role-greeting # TODO
+        color: "#8c3986"
+      mindRoles:
+      - MindRoleCorticalBorer
+

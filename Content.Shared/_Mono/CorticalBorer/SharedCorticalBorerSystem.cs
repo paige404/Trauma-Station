@@ -39,7 +39,7 @@ using Robust.Shared.Utility;
 
 namespace Content.Shared._Mono.CorticalBorer;
 
-public partial class SharedCorticalBorerSystem : EntitySystem
+public class SharedCorticalBorerSystem : EntitySystem
 {
     [Dependency] protected readonly StatusEffectsSystem _statusEffects = default!;
     [Dependency] protected readonly SharedTransformSystem _transform = default!;
@@ -98,7 +98,7 @@ public partial class SharedCorticalBorerSystem : EntitySystem
         return true;
     }
 
-    public void InfestTarget(Entity<CorticalBorerComponent> ent, EntityUid target)
+    public bool InfestTarget(Entity<CorticalBorerComponent> ent, EntityUid target)
     {
         var (uid, comp) = ent;
 
@@ -109,7 +109,7 @@ public partial class SharedCorticalBorerSystem : EntitySystem
         if (!_container.Insert(uid, infestedComp.InfestationContainer))
         {
             RemCompDeferred<CorticalBorerInfestedComponent>(target); // oh no it didn't work somehow so remove the comp you just added...
-            return;
+            return false;
         }
 
         // Set up the Borer
@@ -151,6 +151,8 @@ public partial class SharedCorticalBorerSystem : EntitySystem
                 }
             }
         }
+
+        return true;
     }
 
     /// <summary>
@@ -220,16 +222,17 @@ public partial class SharedCorticalBorerSystem : EntitySystem
         return true;
     }
 
-    public void LayEgg(Entity<CorticalBorerComponent> ent)
+    public EntityUid? LayEgg(Entity<CorticalBorerComponent> ent)
     {
         if (ent.Comp.Host is not { } host)
-            return;
+            return null;
 
         if (ent.Comp.EggProto is not {} egg)
-            return;
+            return null;
 
         var coordinates = _transform.ToMapCoordinates(host.ToCoordinates());
         var spawnedEgg = Spawn(egg, coordinates);
+        return spawnedEgg;
     }
 
     public void PsychicBlast(Entity<CorticalBorerComponent> ent, EntityUid target)
@@ -265,7 +268,7 @@ public partial class SharedCorticalBorerSystem : EntitySystem
     {
         var chems = GetBorerChemicals(ent);
 
-        var state = new CorticalBorerDispenserBoundUserInterfaceState(chems, (int)ent.Comp.InjectAmount);
+        var state = new CorticalBorerDispenserBoundUserInterfaceState(chems, ent.Comp.InjectAmount);
 
         _ui.SetUiState(ent.Owner, CorticalBorerDispenserUiKey.Key, state);
 
@@ -475,36 +478,6 @@ public partial class SharedCorticalBorerSystem : EntitySystem
 
         infestedComp.ControlTimeEnd = null;
         _container.CleanContainer(infestedComp.ControlContainer);
-    }
-
-    /// <summary>
-    /// This borrows shamelessly from <seealso cref="Content.Server._White.Xenomorphs.FaceHugger.FaceHuggerSystem"/>
-    /// </summary>
-    /// <param name="ent"></param>
-    /// <param name="eggProto"></param>
-    public void ImplantEgg(Entity<CorticalBorerComponent> ent, string eggProto)
-    {
-        if (ent.Comp.Host is not { } host)
-            return;
-
-        if (eggProto is not {} egg)
-            return;
-
-        // TODO infection mechanics
-        var bodyPart = _body.GetBodyChildrenOfType(host,
-                BodyPartType.Chest, //component.InfectionBodyPart.Type,
-                symmetry: BodyPartSymmetry.None)
-            .FirstOrNull();
-        if (!bodyPart.HasValue)
-            return;
-
-        var organ = Spawn(eggProto);
-        _body.TryCreateOrganSlot(bodyPart.Value.Id, "xenomorph_larva", out _, bodyPart.Value.Component); // TODO don't hardcode organ slot
-
-        if (!_body.InsertOrgan(bodyPart.Value.Id, organ, "xenomorph_larva", bodyPart.Value.Component)) // TODO don't hardcode organ slot
-        {
-            QueueDel(organ);
-        }
     }
 }
 

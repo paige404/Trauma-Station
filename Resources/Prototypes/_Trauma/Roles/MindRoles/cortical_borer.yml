@@ -1,0 +1,10 @@
+- type: entity
+  parent: BaseMindRoleAntag
+  id: MindRoleCorticalBorer
+  name: cortical borer role
+  components:
+  - type: MindRole
+    antagPrototype: CorticalBorer
+    roleType: TeamAntagonist
+    exclusiveAntag: true
+  - type: CorticalBorerRole

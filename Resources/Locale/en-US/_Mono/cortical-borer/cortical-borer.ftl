@@ -33,3 +33,7 @@ cortical-borer-ghostrole-rules = Lay your eggs and spread your hive, but killing
 ## Examine Text
 infested-control-examined = You have [color=#d842fc]{$timeremaining}[/color] seconds left controlling this body.
 cortical-borer-self-examine = You have [color=#d842fc]{$chempoints}[/color] chemicals.
+
+## Objectives
+objective-condition-corticalborer-eggs-title = Eggs Laid
+objective-condition-corticalborer-infected-title = Currently Infested Hosts

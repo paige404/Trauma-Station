@@ -4,53 +4,33 @@
 // SPDX-FileCopyrightText: 2025 Ilya246
 // SPDX-FileCopyrightText: 2025 ScyronX
 // SPDX-FileCopyrightText: 2025 ark1368
+// SPDX-FileCopyrightText: 2025 tonotom1
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using System.Linq;
+using Content.Server._Mono.Objectives.Components;
 using Content.Server.Administration;
 using Content.Server.Atmos.Components;
-using Content.Server.Body.Systems;
-using Content.Server.Chat.Managers;
 using Content.Server.DoAfter;
 using Content.Server.Ghost.Roles;
-using Content.Server.Ghost.Roles.Components;
 using Content.Server.Medical;
 using Content.Server.Medical.Components;
 using Content.Server.Prayer;
 using Content.Server.Store.Systems;
-using Content.Shared._EinsteinEngines.Language.Components;
 using Content.Shared._Mono.CorticalBorer;
 using Content.Shared._Mono.CorticalBorer.Components;
-using Content.Shared._Starlight.CollectiveMind;
-using Content.Shared.Administration.Logs;
-using Content.Shared.Alert;
-using Content.Shared.Body.Components;
-using Content.Shared.Body.Part;
-using Content.Shared.Chemistry.Components;
-using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Damage;
-// Einstein Engines - Languages
-using Content.Shared.Database;
+using Content.Shared.Interaction.Events;
 using Content.Shared.Inventory;
 using Content.Shared.MedicalScanner;
-using Content.Shared.Mind;
 using Content.Shared.Mind.Components;
-using Content.Shared.Mobs;
-using Content.Shared.Mobs.Components;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Nutrition.Components;
 using Content.Shared.Popups;
-using Content.Shared.Species.Components;
-using Content.Shared.StatusEffect;
-using Robust.Server.GameObjects;
-using Robust.Shared.Map;
 using Robust.Shared.Player;
-using Robust.Shared.Prototypes;
-using Robust.Shared.Serialization.Manager;
-using Robust.Shared.Timing;
-using Robust.Shared.Utility;
+
+// Einstein Engines - Languages
 
 namespace Content.Server._Mono.CorticalBorer;
 
@@ -65,6 +45,7 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
     [Dependency] private readonly PrayerSystem _prayer = default!;
     [Dependency] private readonly StoreSystem _store = default!;
     [Dependency] private readonly MovementSpeedModifierSystem _movementSpeed = default!;
+    [Dependency] private readonly CorticalBorerRuleSystem _rule = default!;
 
     private EntityQuery<ActorComponent> _actorQuery;
     // Trauma end
@@ -90,8 +71,22 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerMovementSpeedChangeEvent>(OnMovementSpeedChange);
         SubscribeLocalEvent<CorticalBorerComponent, CorticalBorerUnlockActionsEvent>(OnUnlockActions);
 
+        SubscribeLocalEvent<CorticalBorerComponent, AttackAttemptEvent>(OnBorerAttackAttempt);
+
         _actorQuery = GetEntityQuery<ActorComponent>();
 
+    }
+
+    private void OnBorerAttackAttempt(Entity<CorticalBorerComponent> ent, ref AttackAttemptEvent args)
+    {
+        var host = ent.Comp.Host;
+        if (host.HasValue && args.Target == host)
+        {
+            if (!CanUseAbility(ent, host.Value))
+            {
+                args.Cancel();
+            }
+        }
     }
 
     private void OnUnlockActions(Entity<CorticalBorerComponent> ent, ref CorticalBorerUnlockActionsEvent args)
@@ -234,128 +229,6 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         _analyzer.StopAnalyzingEntity((ent, health), health.ScannedEntity.Value);
     }
 
-    // public void TakeControlHost(Entity<CorticalBorerComponent> ent, CorticalBorerInfestedComponent infestedComp)
-    // {
-    //     var (worm, comp) = ent;
-    //
-    //     if (comp.Host is not { } host)
-    //         return;
-    //
-    //     // make sure they aren't dead, would throw the worm into a ghost mode and just kill em
-    //     if (TryComp<MobStateComponent>(ent.Comp.Host, out var mobState) &&
-    //         mobState.CurrentState == MobState.Dead)
-    //         return;
-    //
-    //     // Trauma: no clonespam bullshit, no infinite puppeting
-    //     infestedComp.ControlTimeEnd = _timing.CurTime + comp.ControlDuration;
-    //
-    //     if (_mind.TryGetMind(worm, out var wormMind, out _))
-    //         infestedComp.BorerMindId = wormMind;
-    //
-    //     if (_mind.TryGetMind(host, out var controlledMind, out _))
-    //     {
-    //         infestedComp.OrigininalMindId = controlledMind; // set this var here just in case somehow the mind changes from when the infestation started
-    //
-    //         // Trauma: TODO this reeks of shitcode
-    //         // fish head...
-    //         var dummy = Spawn("FoodMeatFish", MapCoordinates.Nullspace);
-    //         _container.Insert(dummy, infestedComp.ControlContainer);
-    //
-    //         _mind.TransferTo(controlledMind, dummy);
-    //     }
-    //     else
-    //     {
-    //         infestedComp.OrigininalMindId = null;
-    //     }
-    //
-    //     comp.ControllingHost = true;
-    //     _mind.TransferTo(wormMind, host);
-    //
-    //     if (TryComp<GhostRoleComponent>(worm, out var ghostRole))
-    //         _ghost.UnregisterGhostRole((worm, ghostRole)); // prevent players from taking the worm role once mind isn't in the worm
-    //
-    //     // add the end control and vomit egg action
-    //     foreach (var actionId in ent.Comp.ControlActions)
-    //     {
-    //         if (_actions.AddAction(host, actionId) is {} action)
-    //             infestedComp.RemoveAbilities.Add(action);
-    //     }
-    //
-    //     if (TryComp<ReformComponent>(host, out var reformComp) && reformComp.ActionEntity.HasValue)
-    //     {
-    //         infestedComp.RemovedReformAction = reformComp.ActionEntity.Value;
-    //
-    //         _actions.RemoveAction(host, reformComp.ActionEntity.Value);
-    //     }
-    //
-    //     // add collective mind if we don't have it already
-    //     var channel = ent.Comp.HivemindChannel;
-    //     var hadHivemind = _collective.HasCollectiveMind(host, channel);
-    //     infestedComp.HadHivemind = hadHivemind;
-    //     if (TryComp<CollectiveMindComponent>(host, out var collectiveComp))
-    //         infestedComp.OldDefault = collectiveComp.DefaultChannel;
-    //     _collective.AddCollectiveMind(host, channel, true); // also set default
-    //
-    //     var str = $"{ToPrettyString(worm)} has taken control over {ToPrettyString(host)}";
-    //
-    //     Log.Info(str);
-    //     _admin.Add(LogType.Mind, LogImpact.High, $"{ToPrettyString(worm)} has taken control over {ToPrettyString(host)}");
-    //     _chat.SendAdminAlert(str);
-    // }
-
-    // public void EndControl(Entity<CorticalBorerComponent> worm)
-    // {
-    //     var (uid, comp) = worm;
-    //
-    //     if (comp.Host is not { } host)
-    //         return;
-    //
-    //     if (!TryComp<CorticalBorerInfestedComponent>(host, out var infestedComp))
-    //         return;
-    //
-    //     // not controlling anyone
-    //     if (!comp.ControllingHost)
-    //         return;
-    //
-    //     comp.ControllingHost = false;
-    //
-    //     // remove all the actions set to remove
-    //     foreach (var ability in infestedComp.RemoveAbilities)
-    //     {
-    //         _actions.RemoveAction(host, ability);
-    //     }
-    //     infestedComp.RemoveAbilities = new(); // clear out the list
-    //
-    //     if (infestedComp.RemovedReformAction.HasValue && TryComp<ReformComponent>(host, out var reformComp))
-    //     {
-    //         var restoredAction = _actions.AddAction(host, reformComp.ActionPrototype);
-    //
-    //         if (restoredAction != null)
-    //         {
-    //             reformComp.ActionEntity = restoredAction.Value;
-    //         }
-    //
-    //         infestedComp.RemovedReformAction = null;
-    //     }
-    //
-    //     if (TryComp<GhostRoleComponent>(worm, out var ghostRole))
-    //         _ghost.RegisterGhostRole((worm, ghostRole)); // re-enable the ghost role after you return to the body
-    //
-    //     // Return everyone to their own bodies
-    //     if (!TerminatingOrDeleted(infestedComp.BorerMindId))
-    //         _mind.TransferTo(infestedComp.BorerMindId, infestedComp.Borer);
-    //     if (!TerminatingOrDeleted(infestedComp.OrigininalMindId) && infestedComp.OrigininalMindId.HasValue)
-    //         _mind.TransferTo(infestedComp.OrigininalMindId.Value, host);
-    //
-    //     if (!infestedComp.HadHivemind)
-    //         _collective.RemoveCollectiveMind(host, worm.Comp.HivemindChannel);
-    //     if (TryComp<CollectiveMindComponent>(host, out var collectiveComp))
-    //         collectiveComp.DefaultChannel = infestedComp.OldDefault;
-    //
-    //     infestedComp.ControlTimeEnd = null;
-    //     _container.CleanContainer(infestedComp.ControlContainer);
-    // }
-
     // Trauma start
     /// <summary>
     /// Opens a prompt to send a message directly to the host.
@@ -385,41 +258,26 @@ public sealed partial class CorticalBorerSystem : SharedCorticalBorerSystem
         });
     }
 
-    // /// <summary>
-    // /// This borrows shamelessly from <seealso cref="Content.Server._White.Xenomorphs.FaceHugger.FaceHuggerSystem"/>
-    // /// </summary>
-    // /// <param name="ent"></param>
-    // /// <param name="eggProto"></param>
-    // public void ImplantEgg(Entity<CorticalBorerComponent> ent, string eggProto)
-    // {
-    //     if (ent.Comp.Host is not { } host)
-    //         return;
-    //
-    //     if (eggProto is not {} egg)
-    //         return;
-    //
-    //     // TODO infection mechanics
-    //     var bodyPart = _body.GetBodyChildrenOfType(host,
-    //             BodyPartType.Chest, //component.InfectionBodyPart.Type,
-    //             symmetry: BodyPartSymmetry.None)
-    //         .FirstOrNull();
-    //     if (!bodyPart.HasValue)
-    //         return;
-    //
-    //     var organ = Spawn(eggProto);
-    //     _body.TryCreateOrganSlot(bodyPart.Value.Id, "xenomorph_larva", out _, bodyPart.Value.Component); // TODO don't hardcode organ slot
-    //
-    //     if (!_body.InsertOrgan(bodyPart.Value.Id, organ, "xenomorph_larva", bodyPart.Value.Component)) // TODO don't hardcode organ slot
-    //     {
-    //         QueueDel(organ);
-    //     }
-    // }
-    // Trauma end
-
     private void OnMindRemoved(Entity<CorticalBorerComponent> ent, ref MindRemovedMessage args)
     {
         // Trauma TODO this can break with aghosting, as aghost doesn't fire a MindRemovedMessage. Maybe look into this.
         if (!ent.Comp.ControllingHost)
             TryEjectBorer(ent); // No storing them in hosts if you don't have a soul
+    }
+
+    public void UpdateInfectedObjective(EntityUid uid, int delta)
+    {
+        // if (!_mind.TryGetObjectiveComp<CorticalBorerInfectedConditionComponent>(uid, out var objective))
+        //     return;
+        if (_rule.GetRule(uid) is not { } rule)
+            return;
+        rule.HostsInfected += delta;
+    }
+
+    public void UpdateEggsObjective(EntityUid uid, int delta)
+    {
+        if (_rule.GetRule(uid) is not { } rule)
+            return;
+        rule.EggsLaid += delta;
     }
 }
